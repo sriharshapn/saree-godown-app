@@ -53,9 +53,10 @@ function AddSareeModal({ onClose, onAdd }) {
       if (imageFile) {
         setLoadingText('Compressing image...');
         const compressed = await imageCompression(imageFile, {
-          maxSizeMB: 0.1,
-          maxWidthOrHeight: 1200,
-          useWebWorker: true
+          maxSizeMB: 0.3,
+          maxWidthOrHeight: 800,
+          useWebWorker: true,
+          initialQuality: 0.6
         });
 
         setLoadingText('Preparing upload...');
