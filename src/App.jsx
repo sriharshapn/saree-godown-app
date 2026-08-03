@@ -46,10 +46,10 @@ function App() {
     }
   };
 
-  const markSold = async (id) => {
-    setSarees(prev => prev.map(s => s.id === id ? { ...s, status: 'sold', dateSold: new Date().toISOString() } : s));
+  const markSold = async (id, soldPrice) => {
+    setSarees(prev => prev.map(s => s.id === id ? { ...s, status: 'sold', dateSold: new Date().toISOString(), soldPrice } : s));
     try {
-      await markSareeAsSold(id);
+      await markSareeAsSold(id, soldPrice);
     } catch (e) {
       console.error("Error marking sold:", e);
     }

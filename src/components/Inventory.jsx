@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { Plus, Search } from 'lucide-react';
 import SareeCard from './SareeCard';
 import AddSareeModal from './AddSareeModal';
+import MarkSoldModal from './MarkSoldModal';
 
 function Inventory({ sarees, addSaree, markSold, deleteSaree }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [sareeToSell, setSareeToSell] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('all');
 
@@ -21,7 +23,7 @@ function Inventory({ sarees, addSaree, markSold, deleteSaree }) {
           <h2>Inventory Management</h2>
           <p style={{ color: 'var(--text-muted)' }}>Manage your beautiful saree collection</p>
         </div>
-        <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
+        <button className="btn-primary" onClick={() => setIsAddModalOpen(true)}>
           <Plus size={20} /> Add New Saree
         </button>
       </div>
@@ -56,17 +58,28 @@ function Inventory({ sarees, addSaree, markSold, deleteSaree }) {
             <SareeCard 
               key={saree.id} 
               saree={saree} 
-              onMarkSold={() => markSold(saree.id)} 
+              onMarkSold={() => setSareeToSell(saree)} 
               onDelete={() => deleteSaree(saree.id)} 
             />
           ))}
         </div>
       )}
 
-      {isModalOpen && (
+      {isAddModalOpen && (
         <AddSareeModal 
-          onClose={() => setIsModalOpen(false)} 
+          onClose={() => setIsAddModalOpen(false)} 
           onAdd={addSaree} 
+        />
+      )}
+
+      {sareeToSell && (
+        <MarkSoldModal
+          saree={sareeToSell}
+          onClose={() => setSareeToSell(null)}
+          onConfirm={(id, soldPrice) => {
+            markSold(id, soldPrice);
+            setSareeToSell(null);
+          }}
         />
       )}
     </div>

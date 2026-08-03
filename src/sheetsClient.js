@@ -41,11 +41,11 @@ export async function addSaree(saree) {
   }
 }
 
-export async function markSareeAsSold(id) {
+export async function markSareeAsSold(id, soldPrice) {
   try {
     const response = await fetch(SCRIPT_URL, {
       method: 'POST',
-      body: JSON.stringify({ action: 'markSold', id })
+      body: JSON.stringify({ action: 'markSold', id, soldPrice })
     });
     const text = await response.text();
     const result = JSON.parse(text);

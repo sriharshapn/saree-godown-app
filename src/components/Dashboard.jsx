@@ -7,8 +7,10 @@ function Dashboard({ sarees }) {
   const soldSarees = sarees.filter(s => s.status === 'sold');
   const availableSarees = sarees.filter(s => s.status === 'available');
   
-  const totalValue = availableSarees.reduce((sum, s) => sum + s.rate, 0);
-  const revenue = soldSarees.reduce((sum, s) => sum + s.rate, 0);
+  const totalValue = availableSarees.reduce((sum, s) => sum + (Number(s.rate) || 0), 0);
+  const revenue = soldSarees.reduce((sum, s) => sum + (Number(s.soldPrice) || Number(s.rate) || 0), 0);
+  const costOfSold = soldSarees.reduce((sum, s) => sum + (Number(s.rate) || 0), 0);
+  const profit = revenue - costOfSold;
 
   const pieData = [
     { name: 'Available', value: availableSarees.length, color: '#D4AF37' },
@@ -68,6 +70,17 @@ function Dashboard({ sarees }) {
           </div>
           <h3 style={{ fontSize: '2rem' }}>₹{revenue.toLocaleString('en-IN')}</h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.5rem' }}>Earned so far</p>
+        </div>
+
+        <div className="glass-card">
+          <div className="flex-between" style={{ marginBottom: '1rem' }}>
+            <span style={{ color: 'var(--text-muted)' }}>Profit / Loss</span>
+            <span style={{ fontSize: '1.2rem' }}>{profit >= 0 ? '📈' : '📉'}</span>
+          </div>
+          <h3 style={{ fontSize: '2rem', color: profit >= 0 ? '#4ade80' : '#FF6B6B' }}>
+            {profit >= 0 ? '+' : '-'}₹{Math.abs(profit).toLocaleString('en-IN')}
+          </h3>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.5rem' }}>From {soldSarees.length} sold items</p>
         </div>
       </div>
 
