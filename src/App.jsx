@@ -2,28 +2,59 @@ import React, { useState, useEffect } from 'react';
 import { LayoutDashboard, Store } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import Inventory from './components/Inventory';
+import { db } from './firebaseClient';
+import { collection, onSnapshot, addDoc, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 
 function App() {
   const [activeTab, setActiveTab] = useState('inventory');
-  const [sarees, setSarees] = useState(() => {
-    const saved = localStorage.getItem('sareeInventory');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [sarees, setSarees] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    localStorage.setItem('sareeInventory', JSON.stringify(sarees));
-  }, [sarees]);
+    const unsubscribe = onSnapshot(collection(db, 'sarees'), (snapshot) => {
+      const sareesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      sareesData.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+      setSarees(sareesData);
+      setLoading(false);
+    }, (error) => {
+      console.error("Error fetching sarees: ", error);
+      setLoading(false);
+    });
 
-  const addSaree = (saree) => {
-    setSarees([...sarees, { ...saree, id: crypto.randomUUID(), status: 'available', dateAdded: new Date().toISOString() }]);
+    return () => unsubscribe();
+  }, []);
+
+  const addSaree = async (saree) => {
+    try {
+      await addDoc(collection(db, 'sarees'), {
+        ...saree,
+        status: 'available',
+        dateAdded: new Date().toISOString()
+      });
+    } catch (e) {
+      console.error("Error adding saree: ", e);
+      alert("Failed to add Saree to Cloud Database.");
+    }
   };
 
-  const markSold = (id) => {
-    setSarees(sarees.map(s => s.id === id ? { ...s, status: 'sold', dateSold: new Date().toISOString() } : s));
+  const markSold = async (id) => {
+    try {
+      const sareeRef = doc(db, 'sarees', id);
+      await updateDoc(sareeRef, {
+        status: 'sold',
+        dateSold: new Date().toISOString()
+      });
+    } catch (e) {
+      console.error("Error marking sold: ", e);
+    }
   };
 
-  const deleteSaree = (id) => {
-    setSarees(sarees.filter(s => s.id !== id));
+  const deleteSaree = async (id) => {
+    try {
+      await deleteDoc(doc(db, 'sarees', id));
+    } catch (e) {
+      console.error("Error deleting: ", e);
+    }
   };
 
   return (
@@ -55,16 +86,24 @@ function App() {
       </aside>
       
       <main className="main-content animate-fade-in">
-        {activeTab === 'inventory' && (
-          <Inventory 
-            sarees={sarees} 
-            addSaree={addSaree} 
-            markSold={markSold} 
-            deleteSaree={deleteSaree} 
-          />
-        )}
-        {activeTab === 'dashboard' && (
-          <Dashboard sarees={sarees} />
+        {loading ? (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+            <p style={{ color: 'var(--text-muted)' }}>Loading inventory from cloud...</p>
+          </div>
+        ) : (
+          <>
+            {activeTab === 'inventory' && (
+              <Inventory 
+                sarees={sarees} 
+                addSaree={addSaree} 
+                markSold={markSold} 
+                deleteSaree={deleteSaree} 
+              />
+            )}
+            {activeTab === 'dashboard' && (
+              <Dashboard sarees={sarees} />
+            )}
+          </>
         )}
       </main>
     </div>

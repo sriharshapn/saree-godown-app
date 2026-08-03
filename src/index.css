@@ -261,6 +261,15 @@ input:focus, select:focus, textarea:focus {
   animation: fadeIn 0.4s ease forwards;
 }
 
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
 /* Grid Layouts */
 .grid-cards {
   display: grid;
