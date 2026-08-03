@@ -65,13 +65,15 @@ function UndoModal({ sale, onClose, onConfirm }) {
 function SalesHistory({ sales, onUndoSale }) {
   const [saleToUndo, setSaleToUndo] = useState(null);
 
-  // Sort sales latest first
-  const sortedSales = [...sales].sort((a, b) => {
-    const da = new Date(a.dateSold);
-    const db = new Date(b.dateSold);
-    if (isNaN(da) || isNaN(db)) return 0;
-    return db - da;
-  });
+  // Filter out undone sales, then sort latest first
+  const sortedSales = sales
+    .filter(sale => sale.status !== 'undone')
+    .sort((a, b) => {
+      const da = new Date(a.dateSold);
+      const db = new Date(b.dateSold);
+      if (isNaN(da) || isNaN(db)) return 0;
+      return db - da;
+    });
 
   return (
     <div className="animate-fade-in">
