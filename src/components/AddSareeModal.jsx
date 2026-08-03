@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Save, Loader } from 'lucide-react';
 import { storage } from '../firebaseClient';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import imageCompression from 'browser-image-compression';
 
 function AddSareeModal({ onClose, onAdd }) {
   const [modelName, setModelName] = useState('');
@@ -10,6 +11,7 @@ function AddSareeModal({ onClose, onAdd }) {
   const [imageUrl, setImageUrl] = useState(''); 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState('');
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -35,11 +37,22 @@ function AddSareeModal({ onClose, onAdd }) {
 
     try {
       if (imageFile) {
-        const fileRef = ref(storage, `saree_images/${crypto.randomUUID()}_${imageFile.name}`);
-        const snapshot = await uploadBytes(fileRef, imageFile);
+        // Compress image before uploading
+        setLoadingText('Compressing image...');
+        const options = {
+          maxSizeMB: 0.2, // Compress to max 200KB
+          maxWidthOrHeight: 1200,
+          useWebWorker: true
+        };
+        const compressedFile = await imageCompression(imageFile, options);
+        
+        setLoadingText('Uploading image...');
+        const fileRef = ref(storage, `saree_images/${crypto.randomUUID()}_${compressedFile.name}`);
+        const snapshot = await uploadBytes(fileRef, compressedFile);
         finalImageUrl = await getDownloadURL(snapshot.ref);
       }
 
+      setLoadingText('Saving saree...');
       await onAdd({
         modelName,
         rate: Number(rate),
@@ -52,6 +65,7 @@ function AddSareeModal({ onClose, onAdd }) {
       console.error("Upload error:", err);
       setError("Failed to upload image. Please try again.");
       setLoading(false);
+      setLoadingText('');
     }
   };
 
@@ -126,7 +140,7 @@ function AddSareeModal({ onClose, onAdd }) {
             </button>
             <button type="submit" className="btn-primary" style={{ flex: 1 }} disabled={loading}>
               {loading ? <Loader className="animate-spin" size={18} /> : <Save size={18} />} 
-              {loading ? 'Saving...' : 'Save Saree'}
+              {loading ? loadingText : 'Save Saree'}
             </button>
           </div>
         </form>
