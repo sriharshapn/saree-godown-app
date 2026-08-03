@@ -8,15 +8,23 @@ function App() {
   const [activeTab, setActiveTab] = useState('inventory');
   const [sarees, setSarees] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const loadSarees = async () => {
     setLoading(true);
+    setError(null);
     try {
       const data = await fetchSarees();
-      data.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+      data.sort((a, b) => {
+        const da = new Date(a.dateAdded);
+        const db = new Date(b.dateAdded);
+        if (isNaN(da) || isNaN(db)) return 0;
+        return db - da;
+      });
       setSarees(data);
     } catch (e) {
       console.error("Error fetching sarees:", e);
+      setError("Could not load inventory. Please try refreshing.");
     } finally {
       setLoading(false);
     }
@@ -29,6 +37,8 @@ function App() {
   const addSaree = async (saree) => {
     try {
       await addSareeAPI(saree);
+      // Wait briefly for Google Sheets to process, then refresh
+      await new Promise(r => setTimeout(r, 1500));
       await loadSarees();
     } catch (e) {
       console.error("Error adding saree:", e);
@@ -37,24 +47,20 @@ function App() {
   };
 
   const markSold = async (id) => {
-    // Optimistic update for instant feedback
     setSarees(prev => prev.map(s => s.id === id ? { ...s, status: 'sold', dateSold: new Date().toISOString() } : s));
     try {
       await markSareeAsSold(id);
     } catch (e) {
       console.error("Error marking sold:", e);
-      await loadSarees();
     }
   };
 
   const deleteSaree = async (id) => {
-    // Optimistic update for instant feedback
     setSarees(prev => prev.filter(s => s.id !== id));
     try {
       await deleteSareeFromCloud(id);
     } catch (e) {
       console.error("Error deleting:", e);
-      await loadSarees();
     }
   };
 
@@ -98,6 +104,11 @@ function App() {
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', flexDirection: 'column', gap: '1rem' }}>
             <div className="animate-spin" style={{ width: '40px', height: '40px', border: '3px solid var(--glass-border)', borderTop: '3px solid var(--primary-gold)', borderRadius: '50%' }}></div>
             <p style={{ color: 'var(--text-muted)' }}>Loading inventory...</p>
+          </div>
+        ) : error ? (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', flexDirection: 'column', gap: '1rem' }}>
+            <p style={{ color: '#FF6B6B' }}>{error}</p>
+            <button className="btn-primary" onClick={loadSarees}>Try Again</button>
           </div>
         ) : (
           <>
