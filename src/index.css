@@ -273,3 +273,46 @@ input:focus, select:focus, textarea:focus {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.5rem;
 }
+
+/* Media Queries for Mobile Responsiveness */
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--glass-border);
+    padding: 1rem;
+  }
+  
+  .sidebar nav {
+    flex-direction: row !important;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+  
+  .nav-item {
+    white-space: nowrap;
+    justify-content: center;
+  }
+  
+  .main-content {
+    padding: 1.5rem 1rem;
+  }
+  
+  .flex-between {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  /* Keep modal header horizontal */
+  .modal-content .flex-between, 
+  .glass-card .flex-between,
+  .flex-between.keep-row {
+    flex-direction: row;
+    align-items: center;
+  }
+}
