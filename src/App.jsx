@@ -1,59 +1,60 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, Store } from 'lucide-react';
+import { LayoutDashboard, Store, RefreshCw } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import Inventory from './components/Inventory';
-import { db } from './firebaseClient';
-import { collection, onSnapshot, addDoc, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import { fetchSarees, addSaree as addSareeAPI, markSareeAsSold, deleteSareeFromCloud } from './sheetsClient';
 
 function App() {
   const [activeTab, setActiveTab] = useState('inventory');
   const [sarees, setSarees] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, 'sarees'), (snapshot) => {
-      const sareesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      sareesData.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
-      setSarees(sareesData);
+  const loadSarees = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchSarees();
+      data.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+      setSarees(data);
+    } catch (e) {
+      console.error("Error fetching sarees:", e);
+    } finally {
       setLoading(false);
-    }, (error) => {
-      console.error("Error fetching sarees: ", error);
-      setLoading(false);
-    });
+    }
+  };
 
-    return () => unsubscribe();
+  useEffect(() => {
+    loadSarees();
   }, []);
 
   const addSaree = async (saree) => {
     try {
-      await addDoc(collection(db, 'sarees'), {
-        ...saree,
-        status: 'available',
-        dateAdded: new Date().toISOString()
-      });
+      await addSareeAPI(saree);
+      await loadSarees();
     } catch (e) {
-      console.error("Error adding saree: ", e);
-      alert("Failed to add Saree to Cloud Database.");
+      console.error("Error adding saree:", e);
+      alert("Failed to add saree. Please try again.");
     }
   };
 
   const markSold = async (id) => {
+    // Optimistic update for instant feedback
+    setSarees(prev => prev.map(s => s.id === id ? { ...s, status: 'sold', dateSold: new Date().toISOString() } : s));
     try {
-      const sareeRef = doc(db, 'sarees', id);
-      await updateDoc(sareeRef, {
-        status: 'sold',
-        dateSold: new Date().toISOString()
-      });
+      await markSareeAsSold(id);
     } catch (e) {
-      console.error("Error marking sold: ", e);
+      console.error("Error marking sold:", e);
+      await loadSarees();
     }
   };
 
   const deleteSaree = async (id) => {
+    // Optimistic update for instant feedback
+    setSarees(prev => prev.filter(s => s.id !== id));
     try {
-      await deleteDoc(doc(db, 'sarees', id));
+      await deleteSareeFromCloud(id);
     } catch (e) {
-      console.error("Error deleting: ", e);
+      console.error("Error deleting:", e);
+      await loadSarees();
     }
   };
 
@@ -82,13 +83,21 @@ function App() {
           >
             <LayoutDashboard size={20} /> Analytics
           </button>
+          <button 
+            className="nav-item"
+            onClick={loadSarees}
+            style={{ background: 'transparent', border: 'none', textAlign: 'left', width: '100%', marginTop: '1rem' }}
+          >
+            <RefreshCw size={20} /> Refresh
+          </button>
         </nav>
       </aside>
       
       <main className="main-content animate-fade-in">
         {loading ? (
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-            <p style={{ color: 'var(--text-muted)' }}>Loading inventory from cloud...</p>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', flexDirection: 'column', gap: '1rem' }}>
+            <div className="animate-spin" style={{ width: '40px', height: '40px', border: '3px solid var(--glass-border)', borderTop: '3px solid var(--primary-gold)', borderRadius: '50%' }}></div>
+            <p style={{ color: 'var(--text-muted)' }}>Loading inventory...</p>
           </div>
         ) : (
           <>

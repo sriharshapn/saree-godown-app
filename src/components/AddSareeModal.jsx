@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { X, Save, Loader } from 'lucide-react';
-import { storage } from '../firebaseClient';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import imageCompression from 'browser-image-compression';
 
 function AddSareeModal({ onClose, onAdd }) {
   const [modelName, setModelName] = useState('');
   const [rate, setRate] = useState('');
   const [imageFile, setImageFile] = useState(null);
-  const [imageUrl, setImageUrl] = useState(''); 
+  const [imageUrl, setImageUrl] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
@@ -19,6 +17,19 @@ function AddSareeModal({ onClose, onAdd }) {
       setImageFile(file);
       setImageUrl('');
     }
+  };
+
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // Remove the "data:image/...;base64," prefix
+        const base64 = reader.result.split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -33,37 +44,41 @@ function AddSareeModal({ onClose, onAdd }) {
     }
 
     setLoading(true);
-    let finalImageUrl = imageUrl;
+    setError('');
 
     try {
+      let imageData = null;
+      let finalImageUrl = imageUrl;
+
       if (imageFile) {
-        // Compress image before uploading
         setLoadingText('Compressing image...');
-        const options = {
-          maxSizeMB: 0.2, // Compress to max 200KB
+        const compressed = await imageCompression(imageFile, {
+          maxSizeMB: 0.1,
           maxWidthOrHeight: 1200,
           useWebWorker: true
-        };
-        const compressedFile = await imageCompression(imageFile, options);
-        
-        setLoadingText('Uploading image...');
-        const fileRef = ref(storage, `saree_images/${crypto.randomUUID()}_${compressedFile.name}`);
-        const snapshot = await uploadBytes(fileRef, compressedFile);
-        finalImageUrl = await getDownloadURL(snapshot.ref);
+        });
+
+        setLoadingText('Preparing upload...');
+        imageData = await fileToBase64(compressed);
+        finalImageUrl = ''; // Will be set by Apps Script after Drive upload
       }
 
-      setLoadingText('Saving saree...');
+      setLoadingText('Saving to cloud...');
+      const id = crypto.randomUUID();
+
       await onAdd({
+        id,
         modelName,
         rate: Number(rate),
-        imageUrl: finalImageUrl || 'https://images.unsplash.com/photo-1610189013233-3ba6804576d3?q=80&w=600&auto=format&fit=crop'
+        imageUrl: finalImageUrl || '',
+        imageData
       });
-      
+
       setLoading(false);
       onClose();
     } catch (err) {
       console.error("Upload error:", err);
-      setError("Failed to upload image. Please try again.");
+      setError("Failed to save. Please try again.");
       setLoading(false);
       setLoadingText('');
     }
@@ -139,7 +154,7 @@ function AddSareeModal({ onClose, onAdd }) {
               Cancel
             </button>
             <button type="submit" className="btn-primary" style={{ flex: 1 }} disabled={loading}>
-              {loading ? <Loader className="animate-spin" size={18} /> : <Save size={18} />} 
+              {loading ? <Loader className="animate-spin" size={18} /> : <Save size={18} />}
               {loading ? loadingText : 'Save Saree'}
             </button>
           </div>
