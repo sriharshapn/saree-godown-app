@@ -145,14 +145,29 @@ function AddSareeModal({ onClose, onAdd }) {
           <div className="form-group">
             <label>Image (Camera / Gallery or URL)</label>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '0.5rem' }}>
-              <input 
-                type="file" 
-                accept="image/*" 
-                capture="environment"
-                onChange={handleImageUpload}
-                style={{ padding: '0.6rem' }}
-                disabled={loading}
-              />
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <div style={{ flex: 1, position: 'relative' }}>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Take Photo</label>
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    capture="environment"
+                    onChange={handleImageUpload}
+                    style={{ padding: '0.6rem', width: '100%', fontSize: '0.85rem' }}
+                    disabled={loading}
+                  />
+                </div>
+                <div style={{ flex: 1, position: 'relative' }}>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Gallery</label>
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handleImageUpload}
+                    style={{ padding: '0.6rem', width: '100%', fontSize: '0.85rem' }}
+                    disabled={loading}
+                  />
+                </div>
+              </div>
               <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>OR</div>
               <input 
                 type="text" 
