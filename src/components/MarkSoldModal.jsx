@@ -4,7 +4,7 @@ import { X, IndianRupee } from 'lucide-react';
 function MarkSoldModal({ saree, onClose, onConfirm }) {
   const availableQty = saree.quantity - saree.soldQuantity;
   const [sellQuantity, setSellQuantity] = useState('1');
-  const [pricePerPiece, setPricePerPiece] = useState(saree.rate.toString());
+  const [pricePerPiece, setPricePerPiece] = useState((saree.sellingPrice || saree.costPrice || 0).toString());
   const [error, setError] = useState('');
 
   const handleSubmit = (e) => {

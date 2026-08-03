@@ -12,6 +12,8 @@ export async function fetchSarees() {
         rate: Number(s.rate) || 0,
         status: String(s.status || 'available'),
         modelName: String(s.modelName || ''),
+        costPrice: Number(s.costPrice) || Number(s.rate) || 0,
+        sellingPrice: Number(s.sellingPrice) || Number(s.rate) || 0,
         imageUrl: String(s.imageUrl || ''),
         dateAdded: String(s.dateAdded || new Date().toISOString()),
         dateSold: s.dateSold ? String(s.dateSold) : '',

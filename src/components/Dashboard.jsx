@@ -1,26 +1,52 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { IndianRupee, Package, ShoppingBag, TrendingUp } from 'lucide-react';
+import { IndianRupee, Package, ShoppingBag, TrendingUp, Award, AlertCircle } from 'lucide-react';
 
-function Dashboard({ sarees }) {
+function Dashboard({ sarees, sales }) {
   const totalSarees = sarees.length;
   const totalPieces = sarees.reduce((sum, s) => sum + (s.quantity || 1), 0);
   const totalSoldPieces = sarees.reduce((sum, s) => sum + (s.soldQuantity || 0), 0);
   const totalAvailablePieces = totalPieces - totalSoldPieces;
 
-  const soldSarees = sarees.filter(s => s.status === 'sold');
-  const partialSarees = sarees.filter(s => s.status === 'partial');
-  const availableSarees = sarees.filter(s => s.status === 'available');
+  // Expected Value of remaining inventory (based on Selling Price)
+  const totalExpectedValue = sarees.reduce((sum, s) => sum + ((s.quantity - s.soldQuantity) * (Number(s.sellingPrice) || 0)), 0);
   
-  const totalValue = sarees.reduce((sum, s) => sum + ((s.quantity - s.soldQuantity) * (Number(s.rate) || 0)), 0);
-  const revenue = sarees.reduce((sum, s) => sum + (Number(s.soldPrice) || 0), 0);
-  const costOfSold = sarees.reduce((sum, s) => sum + ((s.soldQuantity || 0) * (Number(s.rate) || 0)), 0);
-  const profit = revenue - costOfSold;
+  // Realized Revenue and Cost from completed sales
+  const completedSales = sales.filter(s => s.status !== 'undone');
+  const revenue = completedSales.reduce((sum, s) => sum + (Number(s.totalPrice) || 0), 0);
+  
+  // To find the cost of sold items, we look up the original saree's costPrice for each sale
+  const costOfSold = completedSales.reduce((sum, sale) => {
+    const originalSaree = sarees.find(s => s.id === sale.sareeId);
+    const cp = originalSaree ? (Number(originalSaree.costPrice) || 0) : 0;
+    return sum + (sale.quantitySold * cp);
+  }, 0);
+
+  const realizedProfit = revenue - costOfSold;
+  const profitMarginPercent = revenue > 0 ? ((realizedProfit / revenue) * 100).toFixed(1) : 0;
 
   const pieData = [
     { name: 'Available', value: totalAvailablePieces, color: '#D4AF37' },
     { name: 'Sold', value: totalSoldPieces, color: '#2E8B57' }
   ];
+
+  // Most and Least Sold logic
+  const salesByModel = useMemo(() => {
+    const map = {};
+    completedSales.forEach(sale => {
+      map[sale.modelName] = (map[sale.modelName] || 0) + sale.quantitySold;
+    });
+    // Add unsold models as 0
+    sarees.forEach(saree => {
+      if (!map[saree.modelName]) map[saree.modelName] = 0;
+    });
+    
+    return Object.entries(map).map(([name, count]) => ({ name, count }));
+  }, [completedSales, sarees]);
+
+  const sortedModels = [...salesByModel].sort((a, b) => b.count - a.count);
+  const mostSold = sortedModels.slice(0, 3).filter(m => m.count > 0);
+  const leastSold = [...sortedModels].reverse().slice(0, 3);
 
   const addedByDate = sarees.reduce((acc, saree) => {
     const date = new Date(saree.dateAdded).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
@@ -37,26 +63,17 @@ function Dashboard({ sarees }) {
     <div className="animate-fade-in">
       <div style={{ marginBottom: '2rem' }}>
         <h2>Analytics Dashboard</h2>
-        <p style={{ color: 'var(--text-muted)' }}>Overview of your inventory and sales</p>
+        <p style={{ color: 'var(--text-muted)' }}>Advanced overview of your inventory, sales, and profits.</p>
       </div>
 
-      <div className="grid-stats" style={{ marginBottom: '2rem' }}>
+      <div className="grid-stats" style={{ marginBottom: '2rem', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="glass-card">
           <div className="flex-between" style={{ marginBottom: '1rem' }}>
             <span style={{ color: 'var(--text-muted)' }}>Total Inventory</span>
             <Package size={20} color="var(--primary-gold)" />
           </div>
-          <h3 style={{ fontSize: '2rem' }}>{totalSarees}</h3>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.5rem' }}>Total unique items</p>
-        </div>
-
-        <div className="glass-card">
-          <div className="flex-between" style={{ marginBottom: '1rem' }}>
-            <span style={{ color: 'var(--text-muted)' }}>Available Value</span>
-            <IndianRupee size={20} color="#4169E1" />
-          </div>
-          <h3 style={{ fontSize: '2rem' }}>₹{totalValue.toLocaleString('en-IN')}</h3>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.5rem' }}>Expected revenue</p>
+          <h3 style={{ fontSize: '2rem' }}>{totalPieces}</h3>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.5rem' }}>Total pieces ({totalSarees} models)</p>
         </div>
 
         <div className="glass-card">
@@ -64,35 +81,93 @@ function Dashboard({ sarees }) {
             <span style={{ color: 'var(--text-muted)' }}>Total Sold</span>
             <ShoppingBag size={20} color="#2E8B57" />
           </div>
-          <h3 style={{ fontSize: '2rem' }}>{soldSarees.length}</h3>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.5rem' }}>Items sold</p>
+          <h3 style={{ fontSize: '2rem' }}>{totalSoldPieces}</h3>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.5rem' }}>Pieces sold</p>
         </div>
 
         <div className="glass-card">
           <div className="flex-between" style={{ marginBottom: '1rem' }}>
             <span style={{ color: 'var(--text-muted)' }}>Total Revenue</span>
-            <TrendingUp size={20} color="#D4AF37" />
+            <IndianRupee size={20} color="#4169E1" />
           </div>
           <h3 style={{ fontSize: '2rem' }}>₹{revenue.toLocaleString('en-IN')}</h3>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.5rem' }}>Earned so far</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.5rem' }}>Money collected</p>
         </div>
 
         <div className="glass-card">
           <div className="flex-between" style={{ marginBottom: '1rem' }}>
-            <span style={{ color: 'var(--text-muted)' }}>Profit / Loss</span>
-            <span style={{ fontSize: '1.2rem' }}>{profit >= 0 ? '📈' : '📉'}</span>
+            <span style={{ color: 'var(--text-muted)' }}>Realized Profit</span>
+            <TrendingUp size={20} color={realizedProfit >= 0 ? '#4ade80' : '#FF6B6B'} />
           </div>
-          <h3 style={{ fontSize: '2rem', color: profit >= 0 ? '#4ade80' : '#FF6B6B' }}>
-            {profit >= 0 ? '+' : '-'}₹{Math.abs(profit).toLocaleString('en-IN')}
+          <h3 style={{ fontSize: '2rem', color: realizedProfit >= 0 ? '#4ade80' : '#FF6B6B' }}>
+            {realizedProfit >= 0 ? '+' : '-'}₹{Math.abs(realizedProfit).toLocaleString('en-IN')}
           </h3>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.5rem' }}>From {soldSarees.length} sold items</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.5rem' }}>Actual profit from sales</p>
+        </div>
+      </div>
+
+      <div className="grid-cards" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', marginBottom: '2rem' }}>
+        {/* Profit Meter */}
+        <div className="glass-card">
+          <h3 style={{ marginBottom: '1.5rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <TrendingUp size={18} color="var(--primary-gold)" /> Profit Margin Meter
+          </h3>
+          <div style={{ textAlign: 'center', padding: '1rem 0' }}>
+            <div style={{ position: 'relative', width: '200px', height: '100px', margin: '0 auto', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: 0, left: 0, width: '200px', height: '200px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)', border: '20px solid rgba(255,255,255,0.1)', boxSizing: 'border-box', borderBottomColor: 'transparent', borderRightColor: 'transparent', transform: 'rotate(-45deg)' }}></div>
+              <div style={{ position: 'absolute', top: 0, left: 0, width: '200px', height: '200px', borderRadius: '50%', border: '20px solid #4ade80', boxSizing: 'border-box', borderBottomColor: 'transparent', borderRightColor: 'transparent', transform: `rotate(${Math.min(-45 + (profitMarginPercent * 1.8), 135)}deg)`, transition: 'transform 1s ease-out' }}></div>
+            </div>
+            <h2 style={{ fontSize: '2.5rem', marginTop: '-20px', color: '#4ade80' }}>{profitMarginPercent}%</h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Average margin on sold items</p>
+          </div>
+        </div>
+
+        {/* Most Sold Models */}
+        <div className="glass-card">
+          <h3 style={{ marginBottom: '1.5rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Award size={18} color="#D4AF37" /> Top Selling Models
+          </h3>
+          {mostSold.length > 0 ? (
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {mostSold.map((m, i) => (
+                <li key={m.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.8rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ color: 'var(--primary-gold)', fontWeight: 'bold' }}>#{i+1}</span>
+                    {m.name}
+                  </span>
+                  <span className="badge badge-success">{m.count} sold</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '2rem 0' }}>No sales data yet.</p>
+          )}
+        </div>
+
+        {/* Least Sold Models */}
+        <div className="glass-card">
+          <h3 style={{ marginBottom: '1.5rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <AlertCircle size={18} color="#FF6B6B" /> Slow Moving Stock
+          </h3>
+          {leastSold.length > 0 ? (
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {leastSold.map((m, i) => (
+                <li key={m.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.8rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
+                  <span>{m.name}</span>
+                  <span className="badge" style={{ background: 'rgba(255,107,107,0.2)', color: '#FF6B6B' }}>{m.count} sold</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '2rem 0' }}>Not enough data.</p>
+          )}
         </div>
       </div>
 
       <div className="grid-cards" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))' }}>
-        <div className="glass-card" style={{ height: '400px' }}>
-          <h3 style={{ marginBottom: '1.5rem', fontWeight: 500 }}>Inventory Status</h3>
-          {totalSarees > 0 ? (
+        <div className="glass-card" style={{ height: '350px' }}>
+          <h3 style={{ marginBottom: '1.5rem', fontWeight: 500 }}>Inventory Split</h3>
+          {totalPieces > 0 ? (
             <ResponsiveContainer width="100%" height="80%">
               <PieChart>
                 <Pie
@@ -119,13 +194,9 @@ function Dashboard({ sarees }) {
               No data available
             </div>
           )}
-          <div className="flex-between" style={{ padding: '0 2rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><div style={{ width: '12px', height: '12px', background: '#D4AF37', borderRadius: '50%' }}></div> Available ({availableSarees.length})</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><div style={{ width: '12px', height: '12px', background: '#2E8B57', borderRadius: '50%' }}></div> Sold ({soldSarees.length})</div>
-          </div>
         </div>
 
-        <div className="glass-card" style={{ height: '400px' }}>
+        <div className="glass-card" style={{ height: '350px' }}>
           <h3 style={{ marginBottom: '1.5rem', fontWeight: 500 }}>Recent Additions</h3>
           {barData.length > 0 ? (
             <ResponsiveContainer width="100%" height="80%">

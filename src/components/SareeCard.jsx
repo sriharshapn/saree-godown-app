@@ -13,7 +13,7 @@ function SareeCard({ saree, onMarkSold, onDelete }) {
   const isSold = saree.status === 'sold';
   const isPartial = saree.status === 'partial';
   const availableQty = saree.quantity - saree.soldQuantity;
-  const profit = saree.soldPrice - (saree.soldQuantity * saree.rate);
+  const profit = saree.soldPrice - (saree.soldQuantity * saree.costPrice);
 
   const statusLabel = isSold ? 'Sold' : isPartial ? `${saree.soldQuantity}/${saree.quantity} Sold` : 'Available';
   const badgeClass = isSold ? 'badge-success' : isPartial ? 'badge-partial' : 'badge-warning';
@@ -48,10 +48,14 @@ function SareeCard({ saree, onMarkSold, onDelete }) {
       <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.6rem', flex: 1 }}>
         <h3 style={{ fontSize: '1.2rem', fontWeight: 600 }}>{saree.modelName}</h3>
         
-        <p style={{ display: 'flex', alignItems: 'center', color: 'var(--primary-gold)', fontSize: '1.1rem', fontWeight: 700 }}>
-          <IndianRupee size={16} /> {parseFloat(saree.rate).toLocaleString('en-IN')}
-          <span style={{ color: 'var(--text-muted)', fontWeight: 400, fontSize: '0.8rem', marginLeft: '0.5rem' }}>/ piece</span>
-        </p>
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          <p style={{ display: 'flex', alignItems: 'center', color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: 600 }}>
+            CP: <IndianRupee size={12} style={{marginLeft: '4px'}} /> {parseFloat(saree.costPrice || 0).toLocaleString('en-IN')}
+          </p>
+          <p style={{ display: 'flex', alignItems: 'center', color: 'var(--primary-gold)', fontSize: '1rem', fontWeight: 700 }}>
+            SP: <IndianRupee size={14} style={{marginLeft: '4px'}} /> {parseFloat(saree.sellingPrice || saree.costPrice || 0).toLocaleString('en-IN')}
+          </p>
+        </div>
 
         {(isSold || isPartial) && saree.soldPrice > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', background: 'rgba(46,139,87,0.08)', padding: '0.6rem', borderRadius: '8px' }}>

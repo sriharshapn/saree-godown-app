@@ -4,7 +4,8 @@ import imageCompression from 'browser-image-compression';
 
 function AddSareeModal({ onClose, onAdd }) {
   const [modelName, setModelName] = useState('');
-  const [rate, setRate] = useState('');
+  const [costPrice, setCostPrice] = useState('');
+  const [sellingPrice, setSellingPrice] = useState('');
   const [quantity, setQuantity] = useState('1');
   const [imageFile, setImageFile] = useState(null);
   const [imageUrl, setImageUrl] = useState('');
@@ -34,12 +35,12 @@ function AddSareeModal({ onClose, onAdd }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!modelName || !rate) {
-      setError('Model Name and Rate are required.');
+    if (!modelName || !costPrice || !sellingPrice) {
+      setError('Model Name, Cost Price, and Selling Price are required.');
       return;
     }
-    if (isNaN(rate) || Number(rate) <= 0) {
-      setError('Please enter a valid rate.');
+    if (isNaN(costPrice) || Number(costPrice) <= 0 || isNaN(sellingPrice) || Number(sellingPrice) <= 0) {
+      setError('Prices must be valid positive numbers.');
       return;
     }
     if (!quantity || isNaN(quantity) || Number(quantity) < 1) {
@@ -74,7 +75,8 @@ function AddSareeModal({ onClose, onAdd }) {
       await onAdd({
         id,
         modelName,
-        rate: Number(rate),
+        costPrice: Number(costPrice),
+        sellingPrice: Number(sellingPrice),
         quantity: Number(quantity),
         imageUrl: finalImageUrl || '',
         imageData
@@ -118,17 +120,30 @@ function AddSareeModal({ onClose, onAdd }) {
             />
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <div className="form-group" style={{ flex: 1 }}>
-              <label>Rate per piece (₹) *</label>
+          <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+            <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
+              <label>Cost Price (₹) *</label>
               <input 
                 type="number" 
-                placeholder="e.g. 5000" 
-                value={rate}
-                onChange={(e) => setRate(e.target.value)}
+                placeholder="e.g. 3000" 
+                value={costPrice}
+                onChange={(e) => setCostPrice(e.target.value)}
                 disabled={loading}
               />
             </div>
+            <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
+              <label>Selling Price (₹) *</label>
+              <input 
+                type="number" 
+                placeholder="e.g. 5000" 
+                value={sellingPrice}
+                onChange={(e) => setSellingPrice(e.target.value)}
+                disabled={loading}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '1rem' }}>
             <div className="form-group" style={{ flex: 1 }}>
               <label>Quantity *</label>
               <input 

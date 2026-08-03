@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, Store, RefreshCw, History } from 'lucide-react';
+import { LayoutDashboard, Store, RefreshCw, History, LogOut } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import Inventory from './components/Inventory';
 import SalesHistory from './components/SalesHistory';
+import CustomerView from './components/CustomerView';
+import AdminLogin from './components/AdminLogin';
 import { fetchSarees, addSaree as addSareeAPI, markSareeAsSold, deleteSareeFromCloud, undoSale } from './sheetsClient';
 
 function App() {
+  const [authMode, setAuthMode] = useState('customer'); // 'customer', 'login', 'admin'
   const [activeTab, setActiveTab] = useState('inventory');
   const [sarees, setSarees] = useState([]);
   const [sales, setSales] = useState([]);
@@ -90,8 +93,26 @@ function App() {
     }
   };
 
+  if (authMode === 'customer') {
+    return (
+      <>
+        {loading && sarees.length === 0 ? (
+           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--bg-dark)' }}>
+             <div className="animate-spin" style={{ width: '40px', height: '40px', border: '3px solid var(--glass-border)', borderTop: '3px solid var(--primary-gold)', borderRadius: '50%' }}></div>
+           </div>
+        ) : (
+          <CustomerView sarees={sarees} onAdminClick={() => setAuthMode('login')} />
+        )}
+      </>
+    );
+  }
+
+  if (authMode === 'login') {
+    return <AdminLogin onLogin={() => setAuthMode('admin')} />;
+  }
+
   return (
-    <div className="app-container">
+    <div className="app-container animate-fade-in">
       <aside className="sidebar">
         <div>
           <h1 className="text-gradient" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -100,7 +121,7 @@ function App() {
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2rem' }}>Premium Inventory</p>
         </div>
         
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
           <button 
             className={`nav-item ${activeTab === 'inventory' ? 'active' : ''}`}
             onClick={() => setActiveTab('inventory')}
@@ -130,9 +151,17 @@ function App() {
             <RefreshCw size={20} /> Refresh
           </button>
         </nav>
+
+        <button 
+          className="btn-secondary"
+          onClick={() => setAuthMode('customer')}
+          style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: 'auto' }}
+        >
+          <LogOut size={16} /> Logout
+        </button>
       </aside>
       
-      <main className="main-content animate-fade-in">
+      <main className="main-content">
         {loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', flexDirection: 'column', gap: '1rem' }}>
             <div className="animate-spin" style={{ width: '40px', height: '40px', border: '3px solid var(--glass-border)', borderTop: '3px solid var(--primary-gold)', borderRadius: '50%' }}></div>
@@ -154,7 +183,7 @@ function App() {
               />
             )}
             {activeTab === 'dashboard' && (
-              <Dashboard sarees={sarees} />
+              <Dashboard sarees={sarees} sales={sales} />
             )}
             {activeTab === 'history' && (
               <SalesHistory sales={sales} onUndoSale={handleUndoSale} />
