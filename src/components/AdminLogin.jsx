@@ -8,7 +8,7 @@ function AdminLogin({ onLogin }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Default PIN is 1234. In a real app this would be validated securely.
-    if (pin === '1234') {
+    if (pin === '1945') {
       onLogin();
     } else {
       setError('Incorrect PIN. Please try again.');

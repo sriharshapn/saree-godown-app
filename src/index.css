@@ -43,6 +43,8 @@ body {
 .app-container {
   display: flex;
   min-height: 100vh;
+  max-width: 1800px;
+  margin: 0 auto;
 }
 
 .sidebar {
@@ -59,6 +61,7 @@ body {
   flex: 1;
   padding: 2rem 3rem;
   overflow-y: auto;
+  max-height: 100vh;
 }
 
 .nav-item {
@@ -289,6 +292,31 @@ input:focus, select:focus, textarea:focus {
   gap: 1.5rem;
 }
 
+/* Customer Gallery Grid */
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 /* Media Queries for Mobile Responsiveness */
 @media (max-width: 768px) {
   .app-container {
@@ -315,6 +343,7 @@ input:focus, select:focus, textarea:focus {
   
   .main-content {
     padding: 1.5rem 1rem;
+    max-height: none;
   }
   
   .flex-between {
@@ -329,5 +358,31 @@ input:focus, select:focus, textarea:focus {
   .flex-between.keep-row {
     flex-direction: row;
     align-items: center;
+  }
+
+  .grid-cards {
+    grid-template-columns: 1fr !important;
+  }
+
+  .inventory-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+/* Large Desktop */
+@media (min-width: 1400px) {
+  .grid-cards {
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 2rem;
+  }
+
+  .inventory-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .grid-stats {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
   }
 }

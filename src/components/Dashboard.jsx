@@ -106,7 +106,7 @@ function Dashboard({ sarees, sales }) {
         </div>
       </div>
 
-      <div className="grid-cards" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', marginBottom: '2rem' }}>
+      <div className="grid-cards" style={{ marginBottom: '2rem' }}>
         {/* Profit Meter */}
         <div className="glass-card">
           <h3 style={{ marginBottom: '1.5rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -164,7 +164,7 @@ function Dashboard({ sarees, sales }) {
         </div>
       </div>
 
-      <div className="grid-cards" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))' }}>
+      <div className="grid-cards" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}>
         <div className="glass-card" style={{ height: '350px' }}>
           <h3 style={{ marginBottom: '1.5rem', fontWeight: 500 }}>Inventory Split</h3>
           {totalPieces > 0 ? (
