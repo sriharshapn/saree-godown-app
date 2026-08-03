@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, Store, RefreshCw } from 'lucide-react';
+import { LayoutDashboard, Store, RefreshCw, History } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import Inventory from './components/Inventory';
-import { fetchSarees, addSaree as addSareeAPI, markSareeAsSold, deleteSareeFromCloud } from './sheetsClient';
+import SalesHistory from './components/SalesHistory';
+import { fetchSarees, addSaree as addSareeAPI, markSareeAsSold, deleteSareeFromCloud, undoSale } from './sheetsClient';
 
 function App() {
   const [activeTab, setActiveTab] = useState('inventory');
   const [sarees, setSarees] = useState([]);
+  const [sales, setSales] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -14,14 +16,15 @@ function App() {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchSarees();
-      data.sort((a, b) => {
+      const { sarees: fetchedSarees, sales: fetchedSales } = await fetchSarees();
+      fetchedSarees.sort((a, b) => {
         const da = new Date(a.dateAdded);
         const db = new Date(b.dateAdded);
         if (isNaN(da) || isNaN(db)) return 0;
         return db - da;
       });
-      setSarees(data);
+      setSarees(fetchedSarees);
+      setSales(fetchedSales);
     } catch (e) {
       console.error("Error fetching sarees:", e);
       setError("Could not load inventory. Please try refreshing.");
@@ -56,6 +59,8 @@ function App() {
     }));
     try {
       await markSareeAsSold(id, pricePerPiece, sellQuantity);
+      // Refresh to get the accurate sales history from backend
+      loadSarees();
     } catch (e) {
       console.error("Error marking sold:", e);
     }
@@ -67,6 +72,21 @@ function App() {
       await deleteSareeFromCloud(id);
     } catch (e) {
       console.error("Error deleting:", e);
+    }
+  };
+
+  const handleUndoSale = async (transactionId, comment) => {
+    // Optimistic UI update for Sales History
+    setSales(prev => prev.map(sale => 
+      sale.transactionId === transactionId ? { ...sale, status: 'undone', comment } : sale
+    ));
+    try {
+      await undoSale(transactionId, comment);
+      // Refresh to ensure saree quantities are perfectly synced
+      loadSarees();
+    } catch (e) {
+      console.error("Error undoing sale:", e);
+      alert("Failed to undo sale. Please try again.");
     }
   };
 
@@ -94,6 +114,13 @@ function App() {
             style={{ background: activeTab === 'dashboard' ? 'var(--primary-gold-dim)' : 'transparent', border: 'none', textAlign: 'left', width: '100%' }}
           >
             <LayoutDashboard size={20} /> Analytics
+          </button>
+          <button 
+            className={`nav-item ${activeTab === 'history' ? 'active' : ''}`}
+            onClick={() => setActiveTab('history')}
+            style={{ background: activeTab === 'history' ? 'var(--primary-gold-dim)' : 'transparent', border: 'none', textAlign: 'left', width: '100%' }}
+          >
+            <History size={20} /> Sales History
           </button>
           <button 
             className="nav-item"
@@ -128,6 +155,9 @@ function App() {
             )}
             {activeTab === 'dashboard' && (
               <Dashboard sarees={sarees} />
+            )}
+            {activeTab === 'history' && (
+              <SalesHistory sales={sales} onUndoSale={handleUndoSale} />
             )}
           </>
         )}

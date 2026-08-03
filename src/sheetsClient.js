@@ -5,9 +5,9 @@ export async function fetchSarees() {
     const response = await fetch(SCRIPT_URL);
     const text = await response.text();
     const result = JSON.parse(text);
-    if (result.success) {
+    if (result.success && result.data) {
       // Normalize data types from Google Sheets
-      return result.data.map(s => ({
+      const sarees = (result.data.sarees || []).map(s => ({
         ...s,
         rate: Number(s.rate) || 0,
         status: String(s.status || 'available'),
@@ -19,9 +19,21 @@ export async function fetchSarees() {
         quantity: Number(s.quantity) || 1,
         soldQuantity: Number(s.soldQuantity) || 0
       }));
+      
+      const sales = (result.data.sales || []).map(sale => ({
+        ...sale,
+        quantitySold: Number(sale.quantitySold) || 0,
+        pricePerPiece: Number(sale.pricePerPiece) || 0,
+        totalPrice: Number(sale.totalPrice) || 0,
+        dateSold: String(sale.dateSold || ''),
+        status: String(sale.status || 'completed'),
+        comment: String(sale.comment || '')
+      }));
+
+      return { sarees, sales };
     }
     console.error('Sheets API error:', result.error);
-    return [];
+    return { sarees: [], sales: [] };
   } catch (e) {
     console.error('fetchSarees error:', e);
     return [];
@@ -70,6 +82,20 @@ export async function deleteSareeFromCloud(id) {
     return result;
   } catch (e) {
     console.warn('delete response parse failed:', e);
+    return { success: true };
+  }
+}
+export async function undoSale(transactionId, comment) {
+  try {
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'undoSale', transactionId, comment })
+    });
+    const text = await response.text();
+    const result = JSON.parse(text);
+    return result;
+  } catch (e) {
+    console.warn('undoSale response parse failed:', e);
     return { success: true };
   }
 }
