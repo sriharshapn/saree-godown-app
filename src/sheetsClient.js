@@ -14,7 +14,10 @@ export async function fetchSarees() {
         modelName: String(s.modelName || ''),
         imageUrl: String(s.imageUrl || ''),
         dateAdded: String(s.dateAdded || new Date().toISOString()),
-        dateSold: s.dateSold ? String(s.dateSold) : ''
+        dateSold: s.dateSold ? String(s.dateSold) : '',
+        soldPrice: Number(s.soldPrice) || 0,
+        quantity: Number(s.quantity) || 1,
+        soldQuantity: Number(s.soldQuantity) || 0
       }));
     }
     console.error('Sheets API error:', result.error);
@@ -41,11 +44,11 @@ export async function addSaree(saree) {
   }
 }
 
-export async function markSareeAsSold(id, soldPrice) {
+export async function markSareeAsSold(id, soldPrice, sellQuantity) {
   try {
     const response = await fetch(SCRIPT_URL, {
       method: 'POST',
-      body: JSON.stringify({ action: 'markSold', id, soldPrice })
+      body: JSON.stringify({ action: 'markSold', id, soldPrice, sellQuantity })
     });
     const text = await response.text();
     const result = JSON.parse(text);

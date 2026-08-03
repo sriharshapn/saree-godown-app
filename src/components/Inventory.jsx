@@ -76,8 +76,8 @@ function Inventory({ sarees, addSaree, markSold, deleteSaree }) {
         <MarkSoldModal
           saree={sareeToSell}
           onClose={() => setSareeToSell(null)}
-          onConfirm={(id, soldPrice) => {
-            markSold(id, soldPrice);
+          onConfirm={(id, pricePerPiece, sellQuantity) => {
+            markSold(id, pricePerPiece, sellQuantity);
             setSareeToSell(null);
           }}
         />

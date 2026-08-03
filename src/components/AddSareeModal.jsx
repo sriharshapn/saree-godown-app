@@ -5,6 +5,7 @@ import imageCompression from 'browser-image-compression';
 function AddSareeModal({ onClose, onAdd }) {
   const [modelName, setModelName] = useState('');
   const [rate, setRate] = useState('');
+  const [quantity, setQuantity] = useState('1');
   const [imageFile, setImageFile] = useState(null);
   const [imageUrl, setImageUrl] = useState('');
   const [error, setError] = useState('');
@@ -23,7 +24,6 @@ function AddSareeModal({ onClose, onAdd }) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        // Remove the "data:image/...;base64," prefix
         const base64 = reader.result.split(',')[1];
         resolve(base64);
       };
@@ -40,6 +40,10 @@ function AddSareeModal({ onClose, onAdd }) {
     }
     if (isNaN(rate) || Number(rate) <= 0) {
       setError('Please enter a valid rate.');
+      return;
+    }
+    if (!quantity || isNaN(quantity) || Number(quantity) < 1) {
+      setError('Quantity must be at least 1.');
       return;
     }
 
@@ -61,7 +65,7 @@ function AddSareeModal({ onClose, onAdd }) {
 
         setLoadingText('Preparing upload...');
         imageData = await fileToBase64(compressed);
-        finalImageUrl = ''; // Will be set by Apps Script after Drive upload
+        finalImageUrl = '';
       }
 
       setLoadingText('Saving to cloud...');
@@ -71,6 +75,7 @@ function AddSareeModal({ onClose, onAdd }) {
         id,
         modelName,
         rate: Number(rate),
+        quantity: Number(quantity),
         imageUrl: finalImageUrl || '',
         imageData
       });
@@ -113,15 +118,28 @@ function AddSareeModal({ onClose, onAdd }) {
             />
           </div>
 
-          <div className="form-group">
-            <label>Rate (₹) *</label>
-            <input 
-              type="number" 
-              placeholder="e.g. 5000" 
-              value={rate}
-              onChange={(e) => setRate(e.target.value)}
-              disabled={loading}
-            />
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <div className="form-group" style={{ flex: 1 }}>
+              <label>Rate per piece (₹) *</label>
+              <input 
+                type="number" 
+                placeholder="e.g. 5000" 
+                value={rate}
+                onChange={(e) => setRate(e.target.value)}
+                disabled={loading}
+              />
+            </div>
+            <div className="form-group" style={{ flex: 1 }}>
+              <label>Quantity *</label>
+              <input 
+                type="number" 
+                placeholder="e.g. 10" 
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                min="1"
+                disabled={loading}
+              />
+            </div>
           </div>
 
           <div className="form-group">

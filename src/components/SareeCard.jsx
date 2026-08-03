@@ -1,10 +1,22 @@
 import React from 'react';
-import { IndianRupee, Trash2, CheckCircle } from 'lucide-react';
+import { IndianRupee, Trash2, CheckCircle, Clock } from 'lucide-react';
+
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (isNaN(d)) return '';
+  return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) 
+    + ' ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+}
 
 function SareeCard({ saree, onMarkSold, onDelete }) {
   const isSold = saree.status === 'sold';
-  const soldPrice = Number(saree.soldPrice) || 0;
-  const profit = soldPrice - saree.rate;
+  const isPartial = saree.status === 'partial';
+  const availableQty = saree.quantity - saree.soldQuantity;
+  const profit = saree.soldPrice - (saree.soldQuantity * saree.rate);
+
+  const statusLabel = isSold ? 'Sold' : isPartial ? `${saree.soldQuantity}/${saree.quantity} Sold` : 'Available';
+  const badgeClass = isSold ? 'badge-success' : isPartial ? 'badge-partial' : 'badge-warning';
 
   return (
     <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', overflow: 'hidden', padding: 0 }}>
@@ -22,45 +34,57 @@ function SareeCard({ saree, onMarkSold, onDelete }) {
           </div>
         )}
         <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
-          <span className={`badge ${isSold ? 'badge-success' : 'badge-warning'}`}>
-            {isSold ? 'Sold' : 'Available'}
-          </span>
+          <span className={`badge ${badgeClass}`}>{statusLabel}</span>
         </div>
+        {saree.quantity > 1 && (
+          <div style={{ position: 'absolute', top: '10px', left: '10px' }}>
+            <span className="badge" style={{ background: 'rgba(0,0,0,0.6)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)' }}>
+              Qty: {saree.quantity}
+            </span>
+          </div>
+        )}
       </div>
       
-      <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.8rem', flex: 1 }}>
+      <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.6rem', flex: 1 }}>
         <h3 style={{ fontSize: '1.2rem', fontWeight: 600 }}>{saree.modelName}</h3>
+        
         <p style={{ display: 'flex', alignItems: 'center', color: 'var(--primary-gold)', fontSize: '1.1rem', fontWeight: 700 }}>
           <IndianRupee size={16} /> {parseFloat(saree.rate).toLocaleString('en-IN')}
-          <span style={{ color: 'var(--text-muted)', fontWeight: 400, fontSize: '0.8rem', marginLeft: '0.5rem' }}>
-            {isSold ? '(Original)' : '(Rate)'}
-          </span>
+          <span style={{ color: 'var(--text-muted)', fontWeight: 400, fontSize: '0.8rem', marginLeft: '0.5rem' }}>/ piece</span>
         </p>
 
-        {isSold && soldPrice > 0 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-            <p style={{ display: 'flex', alignItems: 'center', color: '#4ade80', fontSize: '1.1rem', fontWeight: 700 }}>
-              <IndianRupee size={16} /> {soldPrice.toLocaleString('en-IN')}
-              <span style={{ fontWeight: 400, fontSize: '0.8rem', marginLeft: '0.5rem' }}>(Sold)</span>
+        {(isSold || isPartial) && saree.soldPrice > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', background: 'rgba(46,139,87,0.08)', padding: '0.6rem', borderRadius: '8px' }}>
+            <p style={{ display: 'flex', alignItems: 'center', color: '#4ade80', fontSize: '1rem', fontWeight: 600 }}>
+              <IndianRupee size={14} /> {saree.soldPrice.toLocaleString('en-IN')}
+              <span style={{ fontWeight: 400, fontSize: '0.8rem', marginLeft: '0.5rem' }}>revenue ({saree.soldQuantity} pcs)</span>
             </p>
-            <p style={{ 
-              fontSize: '0.85rem', 
-              fontWeight: 600,
-              color: profit >= 0 ? '#4ade80' : '#FF6B6B' 
-            }}>
+            <p style={{ fontSize: '0.8rem', fontWeight: 600, color: profit >= 0 ? '#4ade80' : '#FF6B6B' }}>
               {profit >= 0 ? '▲' : '▼'} ₹{Math.abs(profit).toLocaleString('en-IN')} {profit >= 0 ? 'profit' : 'loss'}
             </p>
           </div>
         )}
+
+        {/* Timestamps */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', marginTop: '0.3rem' }}>
+          <p style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-muted)', fontSize: '0.75rem' }}>
+            <Clock size={12} /> Added: {formatDate(saree.dateAdded)}
+          </p>
+          {saree.dateSold && (
+            <p style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-muted)', fontSize: '0.75rem' }}>
+              <Clock size={12} /> Last sold: {formatDate(saree.dateSold)}
+            </p>
+          )}
+        </div>
         
-        <div style={{ marginTop: 'auto', display: 'flex', gap: '0.5rem' }}>
+        <div style={{ marginTop: 'auto', display: 'flex', gap: '0.5rem', paddingTop: '0.5rem' }}>
           {!isSold && (
-            <button className="btn-primary" style={{ flex: 1 }} onClick={onMarkSold}>
-              <CheckCircle size={18} /> Mark Sold
+            <button className="btn-primary" style={{ flex: 1, fontSize: '0.9rem' }} onClick={onMarkSold}>
+              <CheckCircle size={16} /> Sell ({availableQty} left)
             </button>
           )}
           <button className="btn-danger" style={{ flex: isSold ? 1 : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }} onClick={onDelete} title="Delete">
-            <Trash2 size={18} /> {isSold ? 'Remove' : ''}
+            <Trash2 size={16} /> {isSold ? 'Remove' : ''}
           </button>
         </div>
       </div>

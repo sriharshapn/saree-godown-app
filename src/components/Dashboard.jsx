@@ -4,17 +4,22 @@ import { IndianRupee, Package, ShoppingBag, TrendingUp } from 'lucide-react';
 
 function Dashboard({ sarees }) {
   const totalSarees = sarees.length;
+  const totalPieces = sarees.reduce((sum, s) => sum + (s.quantity || 1), 0);
+  const totalSoldPieces = sarees.reduce((sum, s) => sum + (s.soldQuantity || 0), 0);
+  const totalAvailablePieces = totalPieces - totalSoldPieces;
+
   const soldSarees = sarees.filter(s => s.status === 'sold');
+  const partialSarees = sarees.filter(s => s.status === 'partial');
   const availableSarees = sarees.filter(s => s.status === 'available');
   
-  const totalValue = availableSarees.reduce((sum, s) => sum + (Number(s.rate) || 0), 0);
-  const revenue = soldSarees.reduce((sum, s) => sum + (Number(s.soldPrice) || Number(s.rate) || 0), 0);
-  const costOfSold = soldSarees.reduce((sum, s) => sum + (Number(s.rate) || 0), 0);
+  const totalValue = sarees.reduce((sum, s) => sum + ((s.quantity - s.soldQuantity) * (Number(s.rate) || 0)), 0);
+  const revenue = sarees.reduce((sum, s) => sum + (Number(s.soldPrice) || 0), 0);
+  const costOfSold = sarees.reduce((sum, s) => sum + ((s.soldQuantity || 0) * (Number(s.rate) || 0)), 0);
   const profit = revenue - costOfSold;
 
   const pieData = [
-    { name: 'Available', value: availableSarees.length, color: '#D4AF37' },
-    { name: 'Sold', value: soldSarees.length, color: '#2E8B57' }
+    { name: 'Available', value: totalAvailablePieces, color: '#D4AF37' },
+    { name: 'Sold', value: totalSoldPieces, color: '#2E8B57' }
   ];
 
   const addedByDate = sarees.reduce((acc, saree) => {
