@@ -296,7 +296,12 @@ input:focus, select:focus, textarea:focus {
 .inventory-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+  gap: 2rem;
+}
+
+/* Ensure cards don't get too wide on massive screens */
+.inventory-grid > * {
+  max-width: 420px;
 }
 
 /* Scrollbar Styling */
@@ -365,7 +370,20 @@ input:focus, select:focus, textarea:focus {
   }
 
   .inventory-grid {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .inventory-grid > * {
+    max-width: none;
+  }
+}
+
+/* Medium Desktop */
+@media (min-width: 769px) and (max-width: 1399px) {
+  .inventory-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
   }
 }
 

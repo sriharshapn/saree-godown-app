@@ -91,8 +91,8 @@ function CustomerView({ sarees, onAdminClick }) {
         ) : (
           <div className="inventory-grid">
             {filteredSarees.map(saree => (
-              <div key={saree.id} className="glass-card animate-fade-in" style={{ padding: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-                <div style={{ width: '100%', aspectRatio: '3/4', overflow: 'hidden', background: 'rgba(0,0,0,0.3)' }}>
+              <div key={saree.id} className="glass-card animate-fade-in" style={{ padding: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden', cursor: 'default' }}>
+                <div style={{ width: '100%', aspectRatio: '4/5', overflow: 'hidden', background: 'rgba(0,0,0,0.3)', position: 'relative' }}>
                   {saree.imageUrl ? (
                     <img 
                       src={saree.imageUrl} 
@@ -103,31 +103,36 @@ function CustomerView({ sarees, onAdminClick }) {
                       onMouseLeave={e => e.target.style.transform = 'scale(1)'}
                     />
                   ) : (
-                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
                       No Image
                     </div>
                   )}
+                  {(saree.quantity - saree.soldQuantity) <= 2 && (
+                    <span style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(255,60,60,0.85)', color: '#fff', padding: '0.2rem 0.6rem', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 600 }}>
+                      Only {saree.quantity - saree.soldQuantity} left
+                    </span>
+                  )}
                 </div>
                 
-                <div style={{ padding: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.6rem', flex: 1 }}>
-                  <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 600 }}>{saree.modelName}</h3>
+                <div style={{ padding: '1.2rem 1.4rem', display: 'flex', flexDirection: 'column', gap: '0.6rem', flex: 1 }}>
+                  <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600 }}>{saree.modelName}</h3>
                   
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '1.3rem', fontWeight: 'bold', color: 'var(--primary-gold)' }}>
+                    <span style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--primary-gold)' }}>
                       ₹{(saree.sellingPrice || saree.costPrice || 0).toLocaleString('en-IN')}
                     </span>
-                    <span style={{ fontSize: '0.85rem', color: (saree.quantity - saree.soldQuantity) <= 2 ? '#FF6B6B' : 'var(--text-muted)' }}>
-                      {saree.quantity - saree.soldQuantity} left
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                      {saree.quantity - saree.soldQuantity} in stock
                     </span>
                   </div>
                   
                   <button 
                     onClick={() => handleWhatsApp(saree)}
-                    style={{ width: '100%', background: '#25D366', color: '#fff', border: 'none', padding: '0.75rem', borderRadius: '8px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', fontWeight: 600, cursor: 'pointer', marginTop: 'auto', fontFamily: 'Outfit, sans-serif', fontSize: '0.95rem', transition: 'all 0.2s ease' }}
-                    onMouseEnter={e => { e.target.style.background = '#1DAE51'; e.target.style.transform = 'translateY(-2px)'; }}
-                    onMouseLeave={e => { e.target.style.background = '#25D366'; e.target.style.transform = 'translateY(0)'; }}
+                    style={{ width: '100%', background: '#25D366', color: '#fff', border: 'none', padding: '0.7rem', borderRadius: '8px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', fontWeight: 600, cursor: 'pointer', marginTop: 'auto', fontFamily: 'Outfit, sans-serif', fontSize: '0.9rem', transition: 'all 0.2s ease' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = '#1DAE51'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = '#25D366'; e.currentTarget.style.transform = 'translateY(0)'; }}
                   >
-                    <MessageCircle size={18} /> Inquire on WhatsApp
+                    <MessageCircle size={16} /> Inquire on WhatsApp
                   </button>
                 </div>
               </div>
