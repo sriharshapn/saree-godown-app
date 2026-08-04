@@ -12,8 +12,9 @@ function CustomerView({ sarees, onAdminClick }) {
   );
 
   const handleWhatsApp = (saree) => {
-    const text = encodeURIComponent(`Hi! I'm interested in the Saree: ${saree.modelName}. Is it available?`);
-    window.open(`https://wa.me/?text=${text}`, '_blank');
+    const price = (saree.sellingPrice || saree.costPrice || 0).toLocaleString('en-IN');
+    const text = encodeURIComponent(`Hi! I'm interested in the Saree:\n\nModel: ${saree.modelName}\nPrice: ₹${price}\n\nIs this available? I'd like to know more.`);
+    window.open(`https://wa.me/916360718575?text=${text}`, '_blank');
   };
 
   return (
