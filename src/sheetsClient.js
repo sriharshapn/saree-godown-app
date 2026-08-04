@@ -1,4 +1,4 @@
-export const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbywQ-9ZlU9G5m2Xn5N_Kq-z7H00n-h9hXv-XgXb7W9M0H-F_K1E_nE2K9s9lZ1v2h8c/exec';
+export const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbypRfc9cta7EqxkV5PyhA5WRbiL1wJZ0Ay-hdnLgcJE7mKfoLDLms66b2riPITV9kzxHQ/exec';
 
 export function getDriveImageUrl(url) {
   if (!url) return '';
