@@ -10,13 +10,58 @@ import { fetchSarees, addSaree as addSareeAPI, markSareeAsSold, deleteSareeFromC
 function App() {
   const [authMode, setAuthMode] = useState('customer'); // 'customer', 'login', 'admin'
   const [activeTab, setActiveTab] = useState('inventory');
-  const [sarees, setSarees] = useState([]);
-  const [sales, setSales] = useState([]);
-  const [loading, setLoading] = useState(true);
+  
+  // Instant load from localStorage cache (0ms load speed!)
+  const [sarees, setSarees] = useState(() => {
+    try {
+      const cached = localStorage.getItem('udupu_sarees_cache');
+      return cached ? JSON.parse(cached) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const [sales, setSales] = useState(() => {
+    try {
+      const cached = localStorage.getItem('udupu_sales_cache');
+      return cached ? JSON.parse(cached) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const [loading, setLoading] = useState(() => {
+    try {
+      const cached = localStorage.getItem('udupu_sarees_cache');
+      return !cached; // Only show spinner if no cache exists at all
+    } catch (e) {
+      return true;
+    }
+  });
+
   const [error, setError] = useState(null);
 
-  const loadSarees = async () => {
-    setLoading(true);
+  // Helper to update state and sync to localStorage cache
+  const updateSareesCache = (newSarees) => {
+    setSarees(newSarees);
+    try {
+      localStorage.setItem('udupu_sarees_cache', JSON.stringify(newSarees));
+    } catch (e) {
+      console.warn("Could not write sarees to localStorage cache:", e);
+    }
+  };
+
+  const updateSalesCache = (newSales) => {
+    setSales(newSales);
+    try {
+      localStorage.setItem('udupu_sales_cache', JSON.stringify(newSales));
+    } catch (e) {
+      console.warn("Could not write sales to localStorage cache:", e);
+    }
+  };
+
+  const loadSarees = async (isBackground = false) => {
+    if (!isBackground && sarees.length === 0) setLoading(true);
     setError(null);
     try {
       const { sarees: fetchedSarees, sales: fetchedSales } = await fetchSarees();
@@ -26,51 +71,78 @@ function App() {
         if (isNaN(da) || isNaN(db)) return 0;
         return db - da;
       });
-      setSarees(fetchedSarees);
-      setSales(fetchedSales);
+      updateSareesCache(fetchedSarees);
+      updateSalesCache(fetchedSales);
     } catch (e) {
       console.error("Error fetching sarees:", e);
-      setError("Could not load inventory. Please try refreshing.");
+      if (sarees.length === 0) {
+        setError("Could not load inventory. Please try refreshing.");
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadSarees();
+    loadSarees(sarees.length > 0);
   }, []);
 
-  const addSaree = async (saree) => {
+  const addSaree = async (newSaree) => {
+    // 1. Construct temporary saree object for INSTANT OPTIMISTIC UI display (0ms delay!)
+    const tempSaree = {
+      id: newSaree.id || crypto.randomUUID(),
+      modelName: newSaree.modelName,
+      costPrice: Number(newSaree.costPrice) || 0,
+      sellingPrice: Number(newSaree.sellingPrice) || 0,
+      salePrice: newSaree.salePrice ? Number(newSaree.salePrice) : null,
+      quantity: Number(newSaree.quantity) || 1,
+      soldQuantity: 0,
+      soldPrice: 0,
+      status: 'available',
+      dateAdded: new Date().toISOString(),
+      // If base64 image provided, display it immediately using data URL preview
+      imageUrl: newSaree.imageData ? `data:image/jpeg;base64,${newSaree.imageData}` : (newSaree.imageUrl || '')
+    };
+
+    // 2. Immediately update state so it appears on screen INSTANTLY
+    const updatedSarees = [tempSaree, ...sarees];
+    updateSareesCache(updatedSarees);
+
     try {
-      await addSareeAPI(saree);
-      // Wait briefly for Google Sheets to process, then refresh
-      await new Promise(r => setTimeout(r, 1500));
-      await loadSarees();
+      // 3. Send upload request to cloud in background
+      await addSareeAPI(newSaree);
+      
+      // 4. Refetch in background after 3.5s to get official Google Drive link
+      setTimeout(() => {
+        loadSarees(true);
+      }, 3500);
     } catch (e) {
       console.error("Error adding saree:", e);
-      alert("Failed to add saree. Please try again.");
     }
   };
 
   const markSold = async (id, pricePerPiece, sellQuantity) => {
-    setSarees(prev => prev.map(s => {
+    const updatedSarees = sarees.map(s => {
       if (s.id !== id) return s;
       const newSoldQty = s.soldQuantity + sellQuantity;
       const newSoldPrice = s.soldPrice + (sellQuantity * pricePerPiece);
       const newStatus = newSoldQty >= s.quantity ? 'sold' : 'partial';
       return { ...s, status: newStatus, dateSold: new Date().toISOString(), soldPrice: newSoldPrice, soldQuantity: newSoldQty };
-    }));
+    });
+    updateSareesCache(updatedSarees);
+
     try {
       await markSareeAsSold(id, pricePerPiece, sellQuantity);
-      // Refresh to get the accurate sales history from backend
-      loadSarees();
+      loadSarees(true);
     } catch (e) {
       console.error("Error marking sold:", e);
     }
   };
 
   const deleteSaree = async (id) => {
-    setSarees(prev => prev.filter(s => s.id !== id));
+    const updatedSarees = sarees.filter(s => s.id !== id);
+    updateSareesCache(updatedSarees);
+
     try {
       await deleteSareeFromCloud(id);
     } catch (e) {
@@ -79,14 +151,14 @@ function App() {
   };
 
   const handleUndoSale = async (transactionId, comment) => {
-    // Optimistic UI update for Sales History
-    setSales(prev => prev.map(sale => 
+    const updatedSales = sales.map(sale => 
       sale.transactionId === transactionId ? { ...sale, status: 'undone', comment } : sale
-    ));
+    );
+    updateSalesCache(updatedSales);
+
     try {
       await undoSale(transactionId, comment);
-      // Refresh to ensure saree quantities are perfectly synced
-      loadSarees();
+      loadSarees(true);
     } catch (e) {
       console.error("Error undoing sale:", e);
       alert("Failed to undo sale. Please try again.");
@@ -94,13 +166,14 @@ function App() {
   };
 
   const editSaree = async (id, updates) => {
-    // Optimistic UI update
-    setSarees(prev => prev.map(s => 
+    const updatedSarees = sarees.map(s => 
       s.id === id ? { ...s, ...updates } : s
-    ));
+    );
+    updateSareesCache(updatedSarees);
+
     try {
       await editSareeAPI(id, updates);
-      loadSarees();
+      loadSarees(true);
     } catch (e) {
       console.error("Error editing saree:", e);
     }
