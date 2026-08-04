@@ -33,7 +33,7 @@ function CustomerView({ sarees, onAdminClick }) {
         zIndex: 10
       }}>
         <h1 className="text-gradient" style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.5rem', margin: 0 }}>
-          <Store size={28} color="#D4AF37" /> Saree Collection
+          <img src="/logo.jpg" alt="Udupu" style={{ width: '32px', height: '32px', borderRadius: '6px' }} /> Udupu
         </h1>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>

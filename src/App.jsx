@@ -116,9 +116,9 @@ function App() {
       <aside className="sidebar">
         <div>
           <h1 className="text-gradient" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Store size={32} color="#D4AF37" /> Godown
+            <img src="/logo.jpg" alt="Udupu" style={{ width: '36px', height: '36px', borderRadius: '8px' }} /> Udupu
           </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2rem' }}>Premium Inventory</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2rem' }}>Premium Saree Collection</p>
         </div>
         
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>

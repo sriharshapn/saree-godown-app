@@ -17,13 +17,11 @@ function AdminLogin({ onLogin }) {
   };
 
   return (
-    <div className="app-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--bg-dark)' }}>
+    <div className="app-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--bg-main)' }}>
       <div className="glass-card animate-fade-in" style={{ maxWidth: '400px', width: '90%', textAlign: 'center', padding: '3rem 2rem' }}>
-        <div style={{ display: 'inline-flex', justifyContent: 'center', alignItems: 'center', width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(212, 175, 55, 0.1)', marginBottom: '1.5rem' }}>
-          <Lock size={32} color="var(--primary-gold)" />
-        </div>
+        <img src="/logo.jpg" alt="Udupu" style={{ width: '72px', height: '72px', borderRadius: '16px', marginBottom: '1.5rem', boxShadow: '0 4px 20px rgba(212, 175, 55, 0.2)' }} />
         
-        <h2 style={{ marginBottom: '0.5rem' }}>Admin Access</h2>
+        <h2 style={{ marginBottom: '0.5rem' }}>Udupu Admin</h2>
         <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Enter the 4-digit PIN to access inventory management.</p>
         
         <form onSubmit={handleSubmit}>
