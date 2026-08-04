@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MessageCircle, Search, Store } from 'lucide-react';
+import { getDriveImageUrl } from '../sheetsClient';
 
 function CustomerView({ sarees, onAdminClick }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -97,7 +98,7 @@ function CustomerView({ sarees, onAdminClick }) {
                 <div style={{ width: '100%', aspectRatio: '4/5', overflow: 'hidden', background: 'rgba(0,0,0,0.3)', position: 'relative' }}>
                   {saree.imageUrl ? (
                     <img 
-                      src={saree.imageUrl} 
+                      src={getDriveImageUrl(saree.imageUrl)} 
                       alt={saree.modelName} 
                       style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
                       loading="lazy"

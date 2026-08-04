@@ -1,4 +1,23 @@
-import { SCRIPT_URL } from './config';
+export const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbywQ-9ZlU9G5m2Xn5N_Kq-z7H00n-h9hXv-XgXb7W9M0H-F_K1E_nE2K9s9lZ1v2h8c/exec';
+
+export function getDriveImageUrl(url) {
+  if (!url) return '';
+  if (url.startsWith('data:image')) return url; // base64 preview
+
+  // Convert unreliable lh3 URLs to highly reliable Drive thumbnail API
+  if (url.includes('lh3.googleusercontent.com/d/')) {
+    const id = url.split('/d/')[1].split('/')[0].split('?')[0];
+    return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
+  }
+  
+  // Convert standard Drive web URLs
+  if (url.includes('drive.google.com/file/d/')) {
+    const id = url.split('/file/d/')[1].split('/')[0];
+    return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
+  }
+
+  return url;
+}
 
 export async function fetchSarees() {
   try {
@@ -15,7 +34,7 @@ export async function fetchSarees() {
         costPrice: Number(s.costPrice) || Number(s.rate) || 0,
         sellingPrice: Number(s.sellingPrice) || Number(s.rate) || 0,
         salePrice: s.salePrice ? Number(s.salePrice) : null,
-        imageUrl: String(s.imageUrl || ''),
+        imageUrl: getDriveImageUrl(String(s.imageUrl || '')),
         dateAdded: String(s.dateAdded || new Date().toISOString()),
         dateSold: s.dateSold ? String(s.dateSold) : '',
         soldPrice: Number(s.soldPrice) || 0,

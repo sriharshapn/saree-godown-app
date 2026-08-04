@@ -1,5 +1,6 @@
 import React from 'react';
 import { IndianRupee, Trash2, CheckCircle, Clock, Pencil, Tag } from 'lucide-react';
+import { getDriveImageUrl } from '../sheetsClient';
 
 function formatDate(dateStr) {
   if (!dateStr) return '';
@@ -23,7 +24,7 @@ function SareeCard({ saree, onMarkSold, onDelete, onEdit }) {
       <div style={{ position: 'relative', height: '250px', backgroundColor: 'rgba(0,0,0,0.3)' }}>
         {saree.imageUrl ? (
           <img 
-            src={saree.imageUrl} 
+            src={getDriveImageUrl(saree.imageUrl)} 
             alt={saree.modelName} 
             style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
             onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1610189013233-3ba6804576d3?q=80&w=600&auto=format&fit=crop' }}
