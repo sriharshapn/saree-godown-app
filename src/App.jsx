@@ -186,6 +186,11 @@ function App() {
            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--bg-dark)' }}>
              <div className="animate-spin" style={{ width: '40px', height: '40px', border: '3px solid var(--glass-border)', borderTop: '3px solid var(--primary-gold)', borderRadius: '50%' }}></div>
            </div>
+        ) : error && sarees.length === 0 ? (
+           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--bg-dark)', color: 'var(--text-muted)' }}>
+             <p>{error}</p>
+             <button className="btn-primary" onClick={() => loadSarees()}>Retry</button>
+           </div>
         ) : (
           <CustomerView sarees={sarees} onAdminClick={() => setAuthMode('login')} />
         )}

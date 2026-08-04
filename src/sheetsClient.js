@@ -58,7 +58,7 @@ export async function fetchSarees() {
     return { sarees: [], sales: [] };
   } catch (e) {
     console.error('fetchSarees error:', e);
-    return [];
+    return { sarees: [], sales: [] };
   }
 }
 
