@@ -92,7 +92,7 @@ function SareeCard({ saree, onMarkSold, onDelete, onEdit }) {
         <div style={{ marginTop: 'auto', display: 'flex', gap: '0.5rem', paddingTop: '0.5rem' }}>
           {!isSold && (
             <button className="btn-primary" style={{ flex: 1, fontSize: '0.9rem' }} onClick={onMarkSold}>
-              <CheckCircle size={16} /> Sell ({availableQty} left)
+              <CheckCircle size={16} /> Mark Sold (Qty: {availableQty})
             </button>
           )}
           <button className="btn-secondary" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.4rem 0.6rem' }} onClick={onEdit} title="Edit">

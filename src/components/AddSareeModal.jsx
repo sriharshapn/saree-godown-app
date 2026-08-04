@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { X, Save, Loader } from 'lucide-react';
+import { X, Save, Loader, Tag } from 'lucide-react';
 import imageCompression from 'browser-image-compression';
 
 function AddSareeModal({ onClose, onAdd }) {
   const [modelName, setModelName] = useState('');
   const [costPrice, setCostPrice] = useState('');
   const [sellingPrice, setSellingPrice] = useState('');
+  const [salePrice, setSalePrice] = useState('');
   const [quantity, setQuantity] = useState('1');
   const [imageFile, setImageFile] = useState(null);
   const [imageUrl, setImageUrl] = useState('');
@@ -43,6 +44,14 @@ function AddSareeModal({ onClose, onAdd }) {
       setError('Prices must be valid positive numbers.');
       return;
     }
+    if (salePrice && Number(salePrice) <= 0) {
+      setError('Sale price must be a positive number or left empty.');
+      return;
+    }
+    if (salePrice && Number(salePrice) >= Number(sellingPrice)) {
+      setError('Sale price should be less than selling price.');
+      return;
+    }
     if (!quantity || isNaN(quantity) || Number(quantity) < 1) {
       setError('Quantity must be at least 1.');
       return;
@@ -77,6 +86,7 @@ function AddSareeModal({ onClose, onAdd }) {
         modelName,
         costPrice: Number(costPrice),
         sellingPrice: Number(sellingPrice),
+        salePrice: salePrice ? Number(salePrice) : null,
         quantity: Number(quantity),
         imageUrl: finalImageUrl || '',
         imageData
@@ -141,6 +151,38 @@ function AddSareeModal({ onClose, onAdd }) {
                 disabled={loading}
               />
             </div>
+          </div>
+
+          <div className="form-group" style={{ position: 'relative' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Tag size={14} color="#FF6B6B" /> Exclusive Sale Price (₹)
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>— optional, leave empty to remove sale</span>
+            </label>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <input 
+                type="number" 
+                placeholder="e.g. 3999" 
+                value={salePrice}
+                onChange={(e) => setSalePrice(e.target.value)}
+                disabled={loading}
+                style={{ borderColor: salePrice ? 'rgba(255,107,107,0.5)' : undefined }}
+              />
+              {salePrice && (
+                <button 
+                  type="button" 
+                  onClick={() => setSalePrice('')}
+                  className="btn-secondary"
+                  style={{ whiteSpace: 'nowrap', fontSize: '0.85rem' }}
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+            {salePrice && Number(sellingPrice) > 0 && (
+              <p style={{ fontSize: '0.8rem', color: '#FF6B6B', marginTop: '0.4rem' }}>
+                Customer will see ₹{Number(salePrice).toLocaleString('en-IN')} instead of <s>₹{Number(sellingPrice).toLocaleString('en-IN')}</s> — {Math.round(((Number(sellingPrice) - Number(salePrice)) / Number(sellingPrice)) * 100)}% off
+              </p>
+            )}
           </div>
 
           <div style={{ display: 'flex', gap: '1rem' }}>
