@@ -72,9 +72,8 @@ export async function addSaree(saree) {
     const result = JSON.parse(text);
     return result;
   } catch (e) {
-    // POST may have succeeded even if response reading failed (CORS redirect)
-    console.warn('addSaree response parse failed, but POST may have succeeded:', e);
-    return { success: true };
+    console.error('addSaree failed:', e);
+    return { success: false, error: e.message };
   }
 }
 
@@ -88,8 +87,8 @@ export async function markSareeAsSold(id, soldPrice, sellQuantity) {
     const result = JSON.parse(text);
     return result;
   } catch (e) {
-    console.warn('markSold response parse failed:', e);
-    return { success: true };
+    console.error('markSold failed:', e);
+    return { success: false, error: e.message };
   }
 }
 
@@ -103,8 +102,8 @@ export async function deleteSareeFromCloud(id) {
     const result = JSON.parse(text);
     return result;
   } catch (e) {
-    console.warn('delete response parse failed:', e);
-    return { success: true };
+    console.error('delete failed:', e);
+    return { success: false, error: e.message };
   }
 }
 export async function undoSale(transactionId, comment) {
@@ -117,8 +116,8 @@ export async function undoSale(transactionId, comment) {
     const result = JSON.parse(text);
     return result;
   } catch (e) {
-    console.warn('undoSale response parse failed:', e);
-    return { success: true };
+    console.error('undoSale failed:', e);
+    return { success: false, error: e.message };
   }
 }
 
@@ -132,7 +131,7 @@ export async function editSaree(id, updates) {
     const result = JSON.parse(text);
     return result;
   } catch (e) {
-    console.warn('editSaree response parse failed:', e);
-    return { success: true };
+    console.error('editSaree failed:', e);
+    return { success: false, error: e.message };
   }
 }
