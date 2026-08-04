@@ -110,7 +110,10 @@ function App() {
 
     try {
       // 3. Send upload request to cloud in background
-      await addSareeAPI(newSaree);
+      const res = await addSareeAPI(newSaree);
+      if (res && res.success === false) {
+        alert("Failed to add saree: " + (res.error || "Unknown error. Did you forget to deploy the new Google Apps Script?"));
+      }
       
       // 4. Refetch in background after 3.5s to get official Google Drive link
       setTimeout(() => {
@@ -172,10 +175,14 @@ function App() {
     updateSareesCache(updatedSarees);
 
     try {
-      await editSareeAPI(id, updates);
+      const res = await editSareeAPI(id, updates);
+      if (res && res.success === false) {
+        alert("Failed to edit saree: " + (res.error || "Unknown error. Did you forget to deploy the new Google Apps Script?"));
+      }
       loadSarees(true);
     } catch (e) {
       console.error("Error editing saree:", e);
+      alert("Error saving edit. Please check your connection.");
     }
   };
 
