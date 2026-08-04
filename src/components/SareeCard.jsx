@@ -1,5 +1,5 @@
 import React from 'react';
-import { IndianRupee, Trash2, CheckCircle, Clock } from 'lucide-react';
+import { IndianRupee, Trash2, CheckCircle, Clock, Pencil, Tag } from 'lucide-react';
 
 function formatDate(dateStr) {
   if (!dateStr) return '';
@@ -9,7 +9,7 @@ function formatDate(dateStr) {
     + ' ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
 }
 
-function SareeCard({ saree, onMarkSold, onDelete }) {
+function SareeCard({ saree, onMarkSold, onDelete, onEdit }) {
   const isSold = saree.status === 'sold';
   const isPartial = saree.status === 'partial';
   const availableQty = saree.quantity - saree.soldQuantity;
@@ -40,6 +40,13 @@ function SareeCard({ saree, onMarkSold, onDelete }) {
           <div style={{ position: 'absolute', top: '10px', left: '10px' }}>
             <span className="badge" style={{ background: 'rgba(0,0,0,0.6)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)' }}>
               Qty: {saree.quantity}
+            </span>
+          </div>
+        )}
+        {saree.salePrice && (
+          <div style={{ position: 'absolute', bottom: '10px', left: '10px' }}>
+            <span className="badge" style={{ background: 'rgba(255,60,60,0.9)', color: '#fff', border: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Tag size={10} /> SALE
             </span>
           </div>
         )}
@@ -87,8 +94,11 @@ function SareeCard({ saree, onMarkSold, onDelete }) {
               <CheckCircle size={16} /> Sell ({availableQty} left)
             </button>
           )}
-          <button className="btn-danger" style={{ flex: isSold ? 1 : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }} onClick={onDelete} title="Delete">
-            <Trash2 size={16} /> {isSold ? 'Remove' : ''}
+          <button className="btn-secondary" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.4rem 0.6rem' }} onClick={onEdit} title="Edit">
+            <Pencil size={16} />
+          </button>
+          <button className="btn-danger" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }} onClick={onDelete} title="Delete">
+            <Trash2 size={16} />
           </button>
         </div>
       </div>

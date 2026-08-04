@@ -3,10 +3,12 @@ import { Plus, Search } from 'lucide-react';
 import SareeCard from './SareeCard';
 import AddSareeModal from './AddSareeModal';
 import MarkSoldModal from './MarkSoldModal';
+import EditSareeModal from './EditSareeModal';
 
-function Inventory({ sarees, addSaree, markSold, deleteSaree }) {
+function Inventory({ sarees, addSaree, markSold, deleteSaree, editSaree }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [sareeToSell, setSareeToSell] = useState(null);
+  const [sareeToEdit, setSareeToEdit] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('all');
 
@@ -59,7 +61,8 @@ function Inventory({ sarees, addSaree, markSold, deleteSaree }) {
               key={saree.id} 
               saree={saree} 
               onMarkSold={() => setSareeToSell(saree)} 
-              onDelete={() => deleteSaree(saree.id)} 
+              onDelete={() => deleteSaree(saree.id)}
+              onEdit={() => setSareeToEdit(saree)}
             />
           ))}
         </div>
@@ -80,6 +83,14 @@ function Inventory({ sarees, addSaree, markSold, deleteSaree }) {
             markSold(id, pricePerPiece, sellQuantity);
             setSareeToSell(null);
           }}
+        />
+      )}
+
+      {sareeToEdit && (
+        <EditSareeModal
+          saree={sareeToEdit}
+          onClose={() => setSareeToEdit(null)}
+          onSave={editSaree}
         />
       )}
     </div>

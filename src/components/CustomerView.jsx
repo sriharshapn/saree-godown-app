@@ -120,9 +120,25 @@ function CustomerView({ sarees, onAdminClick }) {
                   <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600 }}>{saree.modelName}</h3>
                   
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--primary-gold)' }}>
-                      ₹{(saree.sellingPrice || saree.costPrice || 0).toLocaleString('en-IN')}
-                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      {saree.salePrice ? (
+                        <>
+                          <span style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#FF6B6B' }}>
+                            ₹{saree.salePrice.toLocaleString('en-IN')}
+                          </span>
+                          <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', textDecoration: 'line-through' }}>
+                            ₹{(saree.sellingPrice || saree.costPrice || 0).toLocaleString('en-IN')}
+                          </span>
+                          <span style={{ fontSize: '0.7rem', background: 'rgba(255,60,60,0.15)', color: '#FF6B6B', padding: '0.1rem 0.4rem', borderRadius: '4px', fontWeight: 600 }}>
+                            {Math.round(((saree.sellingPrice - saree.salePrice) / saree.sellingPrice) * 100)}% OFF
+                          </span>
+                        </>
+                      ) : (
+                        <span style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--primary-gold)' }}>
+                          ₹{(saree.sellingPrice || saree.costPrice || 0).toLocaleString('en-IN')}
+                        </span>
+                      )}
+                    </div>
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                       {saree.quantity - saree.soldQuantity} in stock
                     </span>

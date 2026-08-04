@@ -5,7 +5,7 @@ import Inventory from './components/Inventory';
 import SalesHistory from './components/SalesHistory';
 import CustomerView from './components/CustomerView';
 import AdminLogin from './components/AdminLogin';
-import { fetchSarees, addSaree as addSareeAPI, markSareeAsSold, deleteSareeFromCloud, undoSale } from './sheetsClient';
+import { fetchSarees, addSaree as addSareeAPI, markSareeAsSold, deleteSareeFromCloud, undoSale, editSaree as editSareeAPI } from './sheetsClient';
 
 function App() {
   const [authMode, setAuthMode] = useState('customer'); // 'customer', 'login', 'admin'
@@ -90,6 +90,19 @@ function App() {
     } catch (e) {
       console.error("Error undoing sale:", e);
       alert("Failed to undo sale. Please try again.");
+    }
+  };
+
+  const editSaree = async (id, updates) => {
+    // Optimistic UI update
+    setSarees(prev => prev.map(s => 
+      s.id === id ? { ...s, ...updates } : s
+    ));
+    try {
+      await editSareeAPI(id, updates);
+      loadSarees();
+    } catch (e) {
+      console.error("Error editing saree:", e);
     }
   };
 
@@ -180,7 +193,8 @@ function App() {
                 sarees={sarees} 
                 addSaree={addSaree} 
                 markSold={markSold} 
-                deleteSaree={deleteSaree} 
+                deleteSaree={deleteSaree}
+                editSaree={editSaree}
               />
             )}
             {activeTab === 'dashboard' && (

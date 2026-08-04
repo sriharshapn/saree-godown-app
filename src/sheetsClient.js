@@ -14,6 +14,7 @@ export async function fetchSarees() {
         modelName: String(s.modelName || ''),
         costPrice: Number(s.costPrice) || Number(s.rate) || 0,
         sellingPrice: Number(s.sellingPrice) || Number(s.rate) || 0,
+        salePrice: s.salePrice ? Number(s.salePrice) : null,
         imageUrl: String(s.imageUrl || ''),
         dateAdded: String(s.dateAdded || new Date().toISOString()),
         dateSold: s.dateSold ? String(s.dateSold) : '',
@@ -98,6 +99,21 @@ export async function undoSale(transactionId, comment) {
     return result;
   } catch (e) {
     console.warn('undoSale response parse failed:', e);
+    return { success: true };
+  }
+}
+
+export async function editSaree(id, updates) {
+  try {
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'edit', id, updates })
+    });
+    const text = await response.text();
+    const result = JSON.parse(text);
+    return result;
+  } catch (e) {
+    console.warn('editSaree response parse failed:', e);
     return { success: true };
   }
 }
