@@ -115,9 +115,10 @@ function App() {
     <div className="app-container animate-fade-in">
       <aside className="sidebar">
         <div>
-          <h1 className="text-gradient" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <img src="/logo.jpg" alt="Udupu" style={{ width: '36px', height: '36px', borderRadius: '8px' }} /> Udupu
-          </h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <img src="/logo.jpg" alt="Udupu" style={{ width: '36px', height: '36px', borderRadius: '8px' }} />
+            <h1 className="text-gradient" style={{ margin: 0 }}>Udupu</h1>
+          </div>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2rem' }}>Premium Saree Collection</p>
         </div>
         

@@ -32,9 +32,10 @@ function CustomerView({ sarees, onAdminClick }) {
         top: 0,
         zIndex: 10
       }}>
-        <h1 className="text-gradient" style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.5rem', margin: 0 }}>
-          <img src="/logo.jpg" alt="Udupu" style={{ width: '32px', height: '32px', borderRadius: '6px' }} /> Udupu
-        </h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <img src="/logo.jpg" alt="Udupu" style={{ width: '32px', height: '32px', borderRadius: '6px' }} />
+          <h1 className="text-gradient" style={{ fontSize: '1.5rem', margin: 0 }}>Udupu</h1>
+        </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
           {/* Desktop search in header */}
