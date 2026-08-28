@@ -108,15 +108,15 @@ function ProductCard({ item, onWhatsAppClick }) {
           {item.salePrice ? (
             <>
               <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--primary-gold)' }}>
-                ?{item.salePrice.toLocaleString('en-IN')}
+                ₹{item.salePrice.toLocaleString('en-IN')}
               </span>
               <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', textDecoration: 'line-through' }}>
-                ?{item.sellingPrice.toLocaleString('en-IN')}
+                ₹{item.sellingPrice.toLocaleString('en-IN')}
               </span>
             </>
           ) : (
             <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--primary-gold)' }}>
-              ?{item.sellingPrice.toLocaleString('en-IN')}
+              ₹{item.sellingPrice.toLocaleString('en-IN')}
             </span>
           )}
         </div>

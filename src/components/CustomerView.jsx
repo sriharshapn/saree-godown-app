@@ -26,10 +26,11 @@ function CustomerView({ inventory, onAdminClick }) {
   });
 
   const handleWhatsApp = (item) => {
-    const price = (item.salePrice || item.sellingPrice || item.costPrice || 0).toLocaleString('en-IN');
     const itemType = item.category === 'dress' ? 'Dress' : 'Saree';
     const text = encodeURIComponent(
-      `Hi! I'm interested in this ${itemType} from ${SHOP_NAME}:\n\nModel: ${item.modelName}\nPrice: ₹${price}\n\nIs this available? I'd like to know more.`
+      item.salePrice && item.salePrice < item.sellingPrice
+      ? `Hi! I'm interested in this ${itemType} from ${SHOP_NAME}:\n\nModel: ${item.modelName}\nSale Price: ₹${item.salePrice} (Original: ₹${item.sellingPrice})\n\nIs this available? I'd like to know more.`
+      : `Hi! I'm interested in this ${itemType} from ${SHOP_NAME}:\n\nModel: ${item.modelName}\nPrice: ₹${item.sellingPrice}\n\nIs this available? I'd like to know more.`
     );
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
   };

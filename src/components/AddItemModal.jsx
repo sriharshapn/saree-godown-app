@@ -170,7 +170,7 @@ function AddItemModal({ onClose, onAdd, defaultCategory = 'saree' }) {
 
           <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
             <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
-              <label>Cost Price (?) *</label>
+              <label>Cost Price (₹) *</label>
               <input 
                 type="number" 
                 placeholder="e.g. 3000" 
@@ -180,7 +180,7 @@ function AddItemModal({ onClose, onAdd, defaultCategory = 'saree' }) {
               />
             </div>
             <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
-              <label>Selling Price (?) *</label>
+              <label>Selling Price (₹) *</label>
               <input 
                 type="number" 
                 placeholder="e.g. 5000" 
@@ -193,7 +193,7 @@ function AddItemModal({ onClose, onAdd, defaultCategory = 'saree' }) {
 
           <div className="form-group" style={{ position: 'relative' }}>
             <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Tag size={14} color="#FF6B6B" /> Exclusive Sale Price (?)
+              <Tag size={14} color="#FF6B6B" /> Exclusive Sale Price (₹)
               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>- optional</span>
             </label>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
