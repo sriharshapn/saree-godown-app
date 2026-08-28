@@ -43,7 +43,7 @@ function MarkSoldModal({ saree, onClose, onConfirm }) {
           Model: <strong style={{ color: 'var(--text-main)' }}>{saree.modelName}</strong>
         </p>
         <p style={{ color: 'var(--text-muted)', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
-          Original rate: <span style={{ color: 'var(--primary-gold)' }}>₹{saree.rate.toLocaleString('en-IN')}</span> per piece
+          Original rate: <span style={{ color: 'var(--primary-gold)' }}>₹{(saree.costPrice || 0).toLocaleString('en-IN')}</span> per piece
         </p>
         <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
           Available: <strong style={{ color: 'var(--text-main)' }}>{availableQty}</strong> of {saree.quantity} pieces
