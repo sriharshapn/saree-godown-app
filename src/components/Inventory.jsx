@@ -14,7 +14,8 @@ function Inventory({ inventory, addItem, markSold, deleteItem, editItem }) {
   const [categoryFilter, setCategoryFilter] = useState('all');
 
   const filteredInventory = inventory.filter(item => {
-    const matchesSearch = item.modelName.toLowerCase().includes(searchTerm.toLowerCase());
+    const modelNameSafe = String(item.modelName || '');
+    const matchesSearch = modelNameSafe.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = filter === 'all' || item.status === filter;
     const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter;
     return matchesSearch && matchesFilter && matchesCategory;

@@ -17,7 +17,8 @@ function CustomerView({ inventory, onAdminClick }) {
   const availableItems = inventory.filter(s => s.status !== 'sold');
 
   const filteredInventory = availableItems.filter(item => {
-    const matchesSearch = item.modelName.toLowerCase().includes(searchTerm.toLowerCase());
+    const modelNameSafe = String(item.modelName || '');
+    const matchesSearch = modelNameSafe.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
