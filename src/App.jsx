@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import udupuLogo from './assets/logo.jpg';
+import udupuLogo from './assets/logo.png';
 import { LayoutDashboard, Store, RefreshCw, History, LogOut } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import Inventory from './components/Inventory';

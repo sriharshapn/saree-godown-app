@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Lock, LogIn } from 'lucide-react';
-import udupuLogo from '../assets/logo.jpg';
+import udupuLogo from '../assets/logo.png';
 
 function AdminLogin({ onLogin }) {
   const [pin, setPin] = useState('');

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import udupuLogo from '../assets/logo.jpg';
+import udupuLogo from '../assets/logo.png';
 import { MessageCircle, Search, Store, Phone, MapPin, Globe } from 'lucide-react';
 import { getDriveImageUrl } from '../sheetsClient';
 
