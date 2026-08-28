@@ -1,26 +1,40 @@
 import React, { useState } from 'react';
-import { X, Save, Loader, Tag } from 'lucide-react';
+import { X, Save, Loader, Tag, Plus } from 'lucide-react';
 import imageCompression from 'browser-image-compression';
 
-function AddItemModal({ onClose, onAdd }) {
-  const [category, setCategory] = useState('saree');
+function AddItemModal({ onClose, onAdd, defaultCategory = 'saree' }) {
   const [modelName, setModelName] = useState('');
   const [costPrice, setCostPrice] = useState('');
   const [sellingPrice, setSellingPrice] = useState('');
   const [salePrice, setSalePrice] = useState('');
   const [quantity, setQuantity] = useState('1');
-  const [imageFile, setImageFile] = useState(null);
+  const [images, setImages] = useState([]);
   const [imageUrl, setImageUrl] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
+  const [error, setError] = useState('');
+  const [category, setCategory] = useState(defaultCategory);
 
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
+    const files = Array.from(e.target.files);
+    const newImages = files.map(file => ({
+      type: 'file',
+      file: file,
+      preview: URL.createObjectURL(file)
+    }));
+    setImages(prev => [...prev, ...newImages]);
+    e.target.value = '';
+  };
+
+  const handleAddUrl = () => {
+    if (imageUrl) {
+      setImages(prev => [...prev, { type: 'url', url: imageUrl, preview: imageUrl }]);
       setImageUrl('');
     }
+  };
+
+  const removeImage = (idx) => {
+    setImages(prev => prev.filter((_, i) => i !== idx));
   };
 
   const fileToBase64 = (file) => {
@@ -37,6 +51,8 @@ function AddItemModal({ onClose, onAdd }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+
     if (!modelName || !costPrice || !sellingPrice) {
       setError('Model Name, Cost Price, and Selling Price are required.');
       return;
@@ -59,28 +75,35 @@ function AddItemModal({ onClose, onAdd }) {
     }
 
     setLoading(true);
-    setError('');
+    setLoadingText('Compressing images...');
 
     try {
-      let imageData = null;
-      let finalImageUrl = imageUrl;
+      const imageDatas = [];
+      const externalUrls = [];
 
-      if (imageFile) {
-        setLoadingText('Compressing image...');
-        const compressed = await imageCompression(imageFile, {
-          maxSizeMB: 0.3,
-          maxWidthOrHeight: 800,
-          useWebWorker: true,
-          initialQuality: 0.6
-        });
-
-        setLoadingText('Preparing upload...');
-        imageData = await fileToBase64(compressed);
-        finalImageUrl = '';
+      for (const img of images) {
+        if (img.type === 'file') {
+          let fileToProcess = img.file;
+          try {
+            fileToProcess = await imageCompression(img.file, {
+              maxSizeMB: 0.3,
+              maxWidthOrHeight: 800,
+              useWebWorker: false,
+              initialQuality: 0.6
+            });
+          } catch (compressionError) {
+            console.warn('Compression failed, using original', compressionError);
+          }
+          const base64 = await fileToBase64(fileToProcess);
+          imageDatas.push(base64);
+        } else {
+          externalUrls.push(img.url);
+        }
       }
 
       setLoadingText('Saving to cloud...');
-      const id = crypto.randomUUID();
+      const generateId = () => (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
+      const id = generateId();
 
       await onAdd({
         id,
@@ -89,16 +112,16 @@ function AddItemModal({ onClose, onAdd }) {
         sellingPrice: Number(sellingPrice),
         salePrice: salePrice ? Number(salePrice) : null,
         quantity: Number(quantity),
-        imageUrl: finalImageUrl || '',
-        imageData,
+        imageUrl: externalUrls.join(','),
+        imageDatas: imageDatas.length > 0 ? imageDatas : undefined,
         category
       });
 
       setLoading(false);
       onClose();
     } catch (err) {
-      console.error("Upload error:", err);
-      setError("Failed to save. Please try again.");
+      console.error('Upload error:', err);
+      setError('Failed to save. Please try again.');
       setLoading(false);
       setLoadingText('');
     }
@@ -147,7 +170,7 @@ function AddItemModal({ onClose, onAdd }) {
 
           <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
             <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
-              <label>Cost Price (₹) *</label>
+              <label>Cost Price (?) *</label>
               <input 
                 type="number" 
                 placeholder="e.g. 3000" 
@@ -157,7 +180,7 @@ function AddItemModal({ onClose, onAdd }) {
               />
             </div>
             <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
-              <label>Selling Price (₹) *</label>
+              <label>Selling Price (?) *</label>
               <input 
                 type="number" 
                 placeholder="e.g. 5000" 
@@ -170,8 +193,8 @@ function AddItemModal({ onClose, onAdd }) {
 
           <div className="form-group" style={{ position: 'relative' }}>
             <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Tag size={14} color="#FF6B6B" /> Exclusive Sale Price (₹)
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>— optional, leave empty to remove sale</span>
+              <Tag size={14} color="#FF6B6B" /> Exclusive Sale Price (?)
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>- optional</span>
             </label>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               <input 
@@ -193,66 +216,58 @@ function AddItemModal({ onClose, onAdd }) {
                 </button>
               )}
             </div>
-            {salePrice && Number(sellingPrice) > 0 && (
-              <p style={{ fontSize: '0.8rem', color: '#FF6B6B', marginTop: '0.4rem' }}>
-                Customer will see ₹{Number(salePrice).toLocaleString('en-IN')} instead of <s>₹{Number(sellingPrice).toLocaleString('en-IN')}</s> — {Math.round(((Number(sellingPrice) - Number(salePrice)) / Number(sellingPrice)) * 100)}% off
-              </p>
-            )}
-          </div>
-
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <div className="form-group" style={{ flex: 1 }}>
-              <label>Quantity *</label>
-              <input 
-                type="number" 
-                placeholder="e.g. 10" 
-                value={quantity}
-                onChange={(e) => setQuantity(e.target.value)}
-                min="1"
-                disabled={loading}
-              />
-            </div>
           </div>
 
           <div className="form-group">
-            <label>Image (Camera / Gallery or URL)</label>
+            <label>Quantity *</label>
+            <input 
+              type="number" 
+              placeholder="e.g. 10" 
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              min="1"
+              disabled={loading}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Images</label>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '10px' }}>
+              {images.map((img, idx) => (
+                <div key={idx} style={{ position: 'relative', width: '80px', height: '80px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--glass-border)' }}>
+                  <img src={img.preview} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <button type="button" onClick={() => removeImage(idx)} style={{ position: 'absolute', top: 2, right: 2, background: 'rgba(0,0,0,0.6)', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '0.5rem' }}>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <div style={{ flex: 1, position: 'relative' }}>
-                  <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Take Photo</label>
-                  <input 
-                    type="file" 
-                    accept="image/*" 
-                    capture="environment"
-                    onChange={handleImageUpload}
-                    style={{ padding: '0.6rem', width: '100%', fontSize: '0.85rem' }}
-                    disabled={loading}
-                  />
-                </div>
-                <div style={{ flex: 1, position: 'relative' }}>
-                  <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Gallery</label>
-                  <input 
-                    type="file" 
-                    accept="image/*" 
-                    onChange={handleImageUpload}
-                    style={{ padding: '0.6rem', width: '100%', fontSize: '0.85rem' }}
-                    disabled={loading}
-                  />
-                </div>
+              <div style={{ position: 'relative' }}>
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  multiple
+                  onChange={handleImageUpload}
+                  style={{ padding: '0.6rem', width: '100%', fontSize: '0.85rem' }}
+                  disabled={loading}
+                />
               </div>
               <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>OR</div>
-              <input 
-                type="text" 
-                placeholder="https://example.com/image.jpg" 
-                value={imageUrl}
-                onChange={(e) => {
-                  setImageUrl(e.target.value);
-                  setImageFile(null);
-                }}
-                disabled={loading || !!imageFile}
-              />
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <input 
+                  type="text" 
+                  placeholder="https://example.com/image.jpg" 
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  disabled={loading}
+                  style={{ flex: 1 }}
+                />
+                <button type="button" className="btn-secondary" onClick={handleAddUrl} disabled={!imageUrl || loading}>Add URL</button>
+              </div>
             </div>
-            <small style={{ color: 'var(--text-muted)' }}>Upload an image from device or paste a URL. Leave blank for default.</small>
+            <small style={{ color: 'var(--text-muted)' }}>Upload multiple images from device or paste URLs.</small>
           </div>
 
           <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>

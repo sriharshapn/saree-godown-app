@@ -19,12 +19,14 @@ function ItemCard({ item, onMarkSold, onDelete, onEdit }) {
   const statusLabel = isSold ? 'Sold' : isPartial ? `${item.soldQuantity}/${item.quantity} Sold` : 'Available';
   const badgeClass = isSold ? 'badge-success' : isPartial ? 'badge-partial' : 'badge-warning';
 
+  const firstImageUrl = item.imageUrl ? item.imageUrl.split(',')[0] : null;
+
   return (
     <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', overflow: 'hidden', padding: 0 }}>
       <div style={{ position: 'relative', height: '250px', backgroundColor: 'rgba(0,0,0,0.3)' }}>
-        {item.imageUrl ? (
+        {firstImageUrl ? (
           <img 
-            src={getDriveImageUrl(item.imageUrl)} 
+            src={getDriveImageUrl(firstImageUrl)}  
             alt={item.modelName} 
             style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
             onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1610189013233-3ba6804576d3?q=80&w=600&auto=format&fit=crop' }}

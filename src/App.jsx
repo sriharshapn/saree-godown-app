@@ -94,9 +94,15 @@ function App() {
   }, []);
 
   const addItem = async (newItem) => {
-    // 1. Construct temporary item object for INSTANT OPTIMISTIC UI display
+    let tempImageUrl = newItem.imageUrl || '';
+    if (newItem.imageDatas && newItem.imageDatas.length > 0) {
+      // Just use the first image as a preview to avoid blocking localStorage with massive arrays
+      tempImageUrl = tempImageUrl ? tempImageUrl + ',' + `data:image/jpeg;base64,${newItem.imageDatas[0]}` : `data:image/jpeg;base64,${newItem.imageDatas[0]}`;
+    }
+
+    const generateId = () => (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
     const tempItem = {
-      id: newItem.id || crypto.randomUUID(),
+      id: newItem.id || generateId(),
       modelName: newItem.modelName,
       costPrice: Number(newItem.costPrice) || 0,
       sellingPrice: Number(newItem.sellingPrice) || 0,
@@ -107,17 +113,20 @@ function App() {
       status: 'available',
       dateAdded: new Date().toISOString(),
       category: newItem.category || 'saree',
-      // If base64 image provided, display it immediately using data URL preview
-      imageUrl: newItem.imageData ? `data:image/jpeg;base64,${newItem.imageData}` : (newItem.imageUrl || '')
+      imageUrl: tempImageUrl
     };
 
-    // 2. Immediately update state so it appears on screen INSTANTLY
+    const apiPayload = {
+      ...tempItem,
+      imageUrl: newItem.imageUrl || '',
+      imageDatas: newItem.imageDatas
+    };
+
     const updatedInventory = [tempItem, ...inventory];
     updateInventoryCache(updatedInventory);
 
     try {
-      // 3. Send upload request to cloud in background
-      const res = await addItemAPI(tempItem);
+      const res = await addItemAPI(apiPayload);
       if (res && res.success === false) {
         alert("Failed to add item: " + (res.error || "Unknown error. Did you forget to deploy the new Google Apps Script?"));
       }

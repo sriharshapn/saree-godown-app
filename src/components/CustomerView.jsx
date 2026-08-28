@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import udupuLogo from '../assets/logo.png';
+import ProductCard from './ProductCard';
 import { MessageCircle, Search, Store, Phone, MapPin, Globe } from 'lucide-react';
 import { getDriveImageUrl } from '../sheetsClient';
 
@@ -173,130 +174,13 @@ function CustomerView({ inventory, onAdminClick }) {
           </div>
         ) : (
           <div className="inventory-grid">
-            {filteredInventory.map(item => {
-              const availQty = item.quantity - item.soldQuantity;
-              const isLowStock = availQty <= 2;
-              const displayPrice = item.salePrice || item.sellingPrice || item.costPrice || 0;
-
-              return (
-                <article
-                  key={item.id}
-                  className="glass-card animate-fade-in customer-product-card"
-                  style={{ padding: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}
-                >
-                  {/* Image area */}
-                  <div style={{ position: 'relative', aspectRatio: '4/5', overflow: 'hidden', background: 'rgba(0,0,0,0.3)' }}>
-                    {item.imageUrl ? (
-                      <img
-                        src={getDriveImageUrl(item.imageUrl)}
-                        alt={item.modelName}
-                        loading="lazy"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.6s ease' }}
-                        onMouseEnter={e => e.target.style.transform = 'scale(1.06)'}
-                        onMouseLeave={e => e.target.style.transform = 'scale(1)'}
-                        onError={e => { e.target.style.display = 'none'; }}
-                      />
-                    ) : (
-                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-                        No Image
-                      </div>
-                    )}
-
-                    {/* Stock badge */}
-                    <span style={{
-                      position: 'absolute', top: '10px', right: '10px',
-                      background: isLowStock ? 'rgba(255,60,60,0.85)' : 'rgba(46,139,87,0.25)',
-                      color: isLowStock ? '#fff' : '#4ade80',
-                      border: isLowStock ? 'none' : '1px solid rgba(46,139,87,0.4)',
-                      backdropFilter: 'blur(8px)',
-                      padding: '0.2rem 0.65rem',
-                      borderRadius: '20px',
-                      fontSize: '0.72rem',
-                      fontWeight: 600,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.04em',
-                    }}>
-                      {isLowStock ? `Only ${availQty} left` : 'Available'}
-                    </span>
-
-                    {/* Sale badge */}
-                    {item.salePrice && (
-                      <span style={{
-                        position: 'absolute', bottom: '10px', left: '10px',
-                        background: 'rgba(255,60,60,0.9)', color: '#fff',
-                        padding: '0.2rem 0.6rem', borderRadius: '6px',
-                        fontSize: '0.72rem', fontWeight: 700,
-                      }}>
-                        SALE
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Card body */}
-                  <div style={{ padding: '1.2rem 1.4rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
-                    <p style={{ margin: 0, fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 500 }}>
-                      {item.category === 'dress' ? 'Dress' : 'Saree'}
-                    </p>
-                    <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 600, lineHeight: 1.3 }}>
-                      {item.modelName}
-                    </h3>
-
-                    {/* Price */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.2rem' }}>
-                      {item.salePrice ? (
-                        <>
-                          <span style={{ fontSize: '1.2rem', fontWeight: 700, color: '#FF6B6B' }}>
-                            ₹{item.salePrice.toLocaleString('en-IN')}
-                          </span>
-                          <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', textDecoration: 'line-through' }}>
-                            ₹{(item.sellingPrice || 0).toLocaleString('en-IN')}
-                          </span>
-                          <span style={{ fontSize: '0.7rem', background: 'rgba(255,60,60,0.12)', color: '#FF6B6B', padding: '0.1rem 0.4rem', borderRadius: '4px', fontWeight: 600 }}>
-                            {Math.round(((item.sellingPrice - item.salePrice) / item.sellingPrice) * 100)}% OFF
-                          </span>
-                        </>
-                      ) : (
-                        <span style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--primary-gold)' }}>
-                          ₹{displayPrice.toLocaleString('en-IN')}
-                        </span>
-                      )}
-                      <span style={{ marginLeft: 'auto', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                        {availQty} in stock
-                      </span>
-                    </div>
-
-                    {/* WhatsApp CTA */}
-                    <button
-                      onClick={() => handleWhatsApp(item)}
-                      className="whatsapp-btn"
-                      style={{
-                        width: '100%',
-                        background: '#25D366',
-                        color: '#fff',
-                        border: 'none',
-                        padding: '0.72rem',
-                        borderRadius: '8px',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        marginTop: 'auto',
-                        fontFamily: 'Outfit, sans-serif',
-                        fontSize: '0.88rem',
-                        transition: 'all 0.2s ease',
-                      }}
-                      onMouseEnter={e => { e.currentTarget.style.background = '#1DAE51'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-                      onMouseLeave={e => { e.currentTarget.style.background = '#25D366'; e.currentTarget.style.transform = 'translateY(0)'; }}
-                    >
-                      <MessageCircle size={16} />
-                      Inquire on WhatsApp
-                    </button>
-                  </div>
-                </article>
-              );
-            })}
+            {filteredInventory.map(item => (
+              <ProductCard 
+                key={item.id} 
+                item={item} 
+                onWhatsAppClick={handleWhatsApp} 
+              />
+            ))}
           </div>
         )}
       </main>
