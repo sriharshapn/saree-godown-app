@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import udupuLogo from '../assets/logo.jpg';
 import { MessageCircle, Search, Store, Phone, MapPin, Globe } from 'lucide-react';
 import { getDriveImageUrl } from '../sheetsClient';
 
@@ -73,7 +74,7 @@ function CustomerView({ inventory, onAdminClick }) {
       }}>
         {/* Brand */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-          <img src="/logo_v2.jpg" alt="Logo" style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '50%', border: '1px solid rgba(212,175,55,0.35)' }} />
+          <img src={udupuLogo} alt="Logo" style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '50%', border: '1px solid rgba(212,175,55,0.35)' }} />
           <div>
             <h1 className="text-gradient" style={{ fontSize: '1.4rem', margin: 0, lineHeight: 1.1 }}>Udupu</h1>
             <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', margin: 0, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
@@ -313,7 +314,7 @@ function CustomerView({ inventory, onAdminClick }) {
             {/* Brand col */}
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '0.75rem' }}>
-                <img src="/logo_v2.jpg" alt="Logo" style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '50%', border: '1px solid rgba(212,175,55,0.35)' }} />
+                <img src={udupuLogo} alt="Logo" style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '50%', border: '1px solid rgba(212,175,55,0.35)' }} />
                 <h2 className="text-gradient" style={{ fontSize: '1.4rem', margin: 0 }}>Udupu</h2>
               </div>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.6, margin: 0 }}>

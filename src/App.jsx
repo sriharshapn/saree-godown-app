@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import udupuLogo from './assets/logo.jpg';
 import { LayoutDashboard, Store, RefreshCw, History, LogOut } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import Inventory from './components/Inventory';
@@ -232,7 +233,7 @@ function App() {
       <aside className="sidebar">
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <img src="/logo_v2.jpg" alt="Udupu" style={{ width: '36px', height: '36px', borderRadius: '8px' }} />
+            <img src={udupuLogo} alt="Udupu" style={{ width: '36px', height: '36px', borderRadius: '8px' }} />
             <h1 className="text-gradient" style={{ margin: 0 }}>Udupu</h1>
           </div>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2rem' }}>Premium Saree & Dress Collection</p>
