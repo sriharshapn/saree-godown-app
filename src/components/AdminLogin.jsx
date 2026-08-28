@@ -19,7 +19,7 @@ function AdminLogin({ onLogin }) {
   return (
     <div className="app-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--bg-main)' }}>
       <div className="glass-card animate-fade-in" style={{ maxWidth: '400px', width: '90%', textAlign: 'center', padding: '3rem 2rem' }}>
-        <img src="/logo.jpg" alt="Udupu" style={{ width: '72px', height: '72px', borderRadius: '16px', marginBottom: '1.5rem', boxShadow: '0 4px 20px rgba(212, 175, 55, 0.2)' }} />
+        <img src="/logo_v2.jpg" alt="Udupu" style={{ width: '72px', height: '72px', borderRadius: '16px', marginBottom: '1.5rem', boxShadow: '0 4px 20px rgba(212, 175, 55, 0.2)' }} />
         
         <h2 style={{ marginBottom: '0.5rem' }}>Udupu Admin</h2>
         <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Enter the 4-digit PIN to access inventory management.</p>
