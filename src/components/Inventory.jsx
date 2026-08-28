@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
-import { Plus, Search } from 'lucide-react';
-import SareeCard from './SareeCard';
-import AddSareeModal from './AddSareeModal';
+import { Plus, Search, Filter } from 'lucide-react';
+import ItemCard from './ItemCard';
+import AddItemModal from './AddItemModal';
 import MarkSoldModal from './MarkSoldModal';
-import EditSareeModal from './EditSareeModal';
+import EditItemModal from './EditItemModal';
 
-function Inventory({ sarees, addSaree, markSold, deleteSaree, editSaree }) {
+function Inventory({ inventory, addItem, markSold, deleteItem, editItem }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [sareeToSell, setSareeToSell] = useState(null);
-  const [sareeToEdit, setSareeToEdit] = useState(null);
+  const [itemToSell, setItemToSell] = useState(null);
+  const [itemToEdit, setItemToEdit] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
 
-  const filteredSarees = sarees.filter(saree => {
-    const matchesSearch = saree.modelName.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filter === 'all' || saree.status === filter;
-    return matchesSearch && matchesFilter;
+  const filteredInventory = inventory.filter(item => {
+    const matchesSearch = item.modelName.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filter === 'all' || item.status === filter;
+    const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter;
+    return matchesSearch && matchesFilter && matchesCategory;
   });
 
   return (
@@ -23,10 +25,10 @@ function Inventory({ sarees, addSaree, markSold, deleteSaree, editSaree }) {
       <div className="flex-between" style={{ marginBottom: '2rem' }}>
         <div>
           <h2>Inventory Management</h2>
-          <p style={{ color: 'var(--text-muted)' }}>Manage your beautiful saree collection</p>
+          <p style={{ color: 'var(--text-muted)' }}>Manage your beautiful collection</p>
         </div>
         <button className="btn-primary" onClick={() => setIsAddModalOpen(true)}>
-          <Plus size={20} /> Add New Saree
+          <Plus size={20} /> Add New Item
         </button>
       </div>
 
@@ -42,6 +44,11 @@ function Inventory({ sarees, addSaree, markSold, deleteSaree, editSaree }) {
           />
         </div>
         <div style={{ display: 'flex', gap: '1rem' }}>
+          <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} style={{ width: '150px' }}>
+            <option value="all">All Categories</option>
+            <option value="saree">Sarees</option>
+            <option value="dress">Dresses</option>
+          </select>
           <select value={filter} onChange={(e) => setFilter(e.target.value)} style={{ width: '150px' }}>
             <option value="all">All Status</option>
             <option value="available">Available</option>
@@ -50,47 +57,47 @@ function Inventory({ sarees, addSaree, markSold, deleteSaree, editSaree }) {
         </div>
       </div>
 
-      {filteredSarees.length === 0 ? (
+      {filteredInventory.length === 0 ? (
         <div className="glass-card" style={{ textAlign: 'center', padding: '4rem 2rem' }}>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem' }}>No sarees found matching your criteria.</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem' }}>No inventory found matching your criteria.</p>
         </div>
       ) : (
         <div className="grid-cards">
-          {filteredSarees.map(saree => (
-            <SareeCard 
-              key={saree.id} 
-              saree={saree} 
-              onMarkSold={() => setSareeToSell(saree)} 
-              onDelete={() => deleteSaree(saree.id)}
-              onEdit={() => setSareeToEdit(saree)}
+          {filteredInventory.map(item => (
+            <ItemCard 
+              key={item.id} 
+              item={item} 
+              onMarkSold={() => setItemToSell(item)} 
+              onDelete={() => deleteItem(item.id)}
+              onEdit={() => setItemToEdit(item)}
             />
           ))}
         </div>
       )}
 
       {isAddModalOpen && (
-        <AddSareeModal 
+        <AddItemModal 
           onClose={() => setIsAddModalOpen(false)} 
-          onAdd={addSaree} 
+          onAdd={addItem} 
         />
       )}
 
-      {sareeToSell && (
+      {itemToSell && (
         <MarkSoldModal
-          saree={sareeToSell}
-          onClose={() => setSareeToSell(null)}
+          item={itemToSell}
+          onClose={() => setItemToSell(null)}
           onConfirm={(id, pricePerPiece, sellQuantity) => {
             markSold(id, pricePerPiece, sellQuantity);
-            setSareeToSell(null);
+            setItemToSell(null);
           }}
         />
       )}
 
-      {sareeToEdit && (
-        <EditSareeModal
-          saree={sareeToEdit}
-          onClose={() => setSareeToEdit(null)}
-          onSave={editSaree}
+      {itemToEdit && (
+        <EditItemModal
+          item={itemToEdit}
+          onClose={() => setItemToEdit(null)}
+          onSave={editItem}
         />
       )}
     </div>

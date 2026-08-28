@@ -2,23 +2,23 @@ import React, { useMemo } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { IndianRupee, Package, ShoppingBag, TrendingUp, Award, AlertCircle } from 'lucide-react';
 
-function Dashboard({ sarees, sales }) {
-  const totalSarees = sarees.length;
-  const totalPieces = sarees.reduce((sum, s) => sum + (s.quantity || 1), 0);
-  const totalSoldPieces = sarees.reduce((sum, s) => sum + (s.soldQuantity || 0), 0);
+function Dashboard({ inventory, sales }) {
+  const totalModels = inventory.length;
+  const totalPieces = inventory.reduce((sum, s) => sum + (s.quantity || 1), 0);
+  const totalSoldPieces = inventory.reduce((sum, s) => sum + (s.soldQuantity || 0), 0);
   const totalAvailablePieces = totalPieces - totalSoldPieces;
 
   // Expected Value of remaining inventory (based on Selling Price)
-  const totalExpectedValue = sarees.reduce((sum, s) => sum + ((s.quantity - s.soldQuantity) * (Number(s.sellingPrice) || 0)), 0);
+  const totalExpectedValue = inventory.reduce((sum, s) => sum + ((s.quantity - s.soldQuantity) * (Number(s.sellingPrice) || 0)), 0);
   
   // Realized Revenue and Cost from completed sales
   const completedSales = sales.filter(s => s.status !== 'undone');
   const revenue = completedSales.reduce((sum, s) => sum + (Number(s.totalPrice) || 0), 0);
   
-  // To find the cost of sold items, we look up the original saree's costPrice for each sale
+  // To find the cost of sold items, we look up the original item's costPrice for each sale
   const costOfSold = completedSales.reduce((sum, sale) => {
-    const originalSaree = sarees.find(s => s.id === sale.sareeId);
-    const cp = originalSaree ? (Number(originalSaree.costPrice) || 0) : 0;
+    const originalItem = inventory.find(s => s.id === sale.sareeId);
+    const cp = originalItem ? (Number(originalItem.costPrice) || 0) : 0;
     return sum + (sale.quantitySold * cp);
   }, 0);
 
@@ -37,19 +37,19 @@ function Dashboard({ sarees, sales }) {
       map[sale.modelName] = (map[sale.modelName] || 0) + sale.quantitySold;
     });
     // Add unsold models as 0
-    sarees.forEach(saree => {
-      if (!map[saree.modelName]) map[saree.modelName] = 0;
+    inventory.forEach(item => {
+      if (!map[item.modelName]) map[item.modelName] = 0;
     });
     
     return Object.entries(map).map(([name, count]) => ({ name, count }));
-  }, [completedSales, sarees]);
+  }, [completedSales, inventory]);
 
   const sortedModels = [...salesByModel].sort((a, b) => b.count - a.count);
   const mostSold = sortedModels.slice(0, 3).filter(m => m.count > 0);
   const leastSold = [...sortedModels].reverse().slice(0, 3);
 
-  const addedByDate = sarees.reduce((acc, saree) => {
-    const date = new Date(saree.dateAdded).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
+  const addedByDate = inventory.reduce((acc, item) => {
+    const date = new Date(item.dateAdded).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
     acc[date] = (acc[date] || 0) + 1;
     return acc;
   }, {});
@@ -73,7 +73,7 @@ function Dashboard({ sarees, sales }) {
             <Package size={20} color="var(--primary-gold)" />
           </div>
           <h3 style={{ fontSize: '2rem' }}>{totalPieces}</h3>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.5rem' }}>Total pieces ({totalSarees} models)</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.5rem' }}>Total pieces ({totalModels} models)</p>
         </div>
 
         <div className="glass-card">

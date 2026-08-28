@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-28T14:33:00Z",
+  "title": "Design System: Udupu",
+  "extensions": {
+    "colorMeta": {
+      "primary-gold":     { "role": "primary",   "displayName": "Antique Gold",    "canonical": "#D4AF37", "tonalRamp": ["#1a1400","#332800","#4d3c00","#665000","#806400","#997800","#b38c00","#cca000"] },
+      "primary-gold-hover": { "role": "primary", "displayName": "Bright Gold",     "canonical": "#F3CA47", "tonalRamp": ["#1c1600","#382b00","#544000","#705500","#8c6a00","#a87f00","#c49400","#e0a900"] },
+      "primary-gold-dim": { "role": "primary",   "displayName": "Gold Whisper",    "canonical": "rgba(212, 175, 55, 0.15)" },
+      "bg-main":          { "role": "neutral",   "displayName": "Obsidian",        "canonical": "#0B0A0F", "tonalRamp": ["#0B0A0F","#16151E","#201F2E","#2a293e","#34334e","#3e3d5e","#48476e","#52517e"] },
+      "bg-secondary":     { "role": "neutral",   "displayName": "Deep Onyx",       "canonical": "#16151E", "tonalRamp": ["#0d0c14","#16151E","#201f2e","#2a293e","#34334e","#3e3d5e","#48476e","#52517e"] },
+      "text-main":        { "role": "neutral",   "displayName": "Warm Frost",      "canonical": "#F4F4F6" },
+      "text-muted":       { "role": "neutral",   "displayName": "Pewter",          "canonical": "#A0A0A8" },
+      "accent-burgundy":  { "role": "secondary", "displayName": "Burgundy",        "canonical": "#8B1C31", "tonalRamp": ["#1a0509","#330a12","#4d0f1b","#661424","#80192d","#991e36","#b2233f","#cc2848"] },
+      "danger":           { "role": "secondary", "displayName": "Alert Red",       "canonical": "#FF6B6B" },
+      "accent-green":     { "role": "tertiary",  "displayName": "Forest Green",    "canonical": "#2E8B57", "tonalRamp": ["#061209","#0c2412","#12361b","#184824","#1e5a2d","#246c36","#2a7e3f","#2e8b57"] },
+      "accent-blue":      { "role": "tertiary",  "displayName": "Royal Blue",      "canonical": "#4169E1", "tonalRamp": ["#06091a","#0c1234","#121b4e","#182468","#1e2d82","#24369c","#2a3fb6","#4169E1"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Page titles, brand wordmark, primary h1 headings." },
+      "headline": { "displayName": "Headline", "purpose": "Section titles within the admin panel (h2)." },
+      "body":     { "displayName": "Body",    "purpose": "Descriptions, form labels, paragraph copy." },
+      "label":    { "displayName": "Label",   "purpose": "Badges, nav items, button text, metadata." }
+    },
+    "shadows": [
+      { "name": "gold-glow",    "value": "0 4px 30px rgba(212, 175, 55, 0.15)", "purpose": "Card hover state and active primary button. Never at rest." },
+      { "name": "modal-depth",  "value": "0 20px 40px rgba(0, 0, 0, 0.5)",     "purpose": "Modal dialog backdrop depth." },
+      { "name": "focus-ring",   "value": "0 0 0 2px rgba(212, 175, 55, 0.15)", "purpose": "Input focus ring — gold whisper glow." },
+      { "name": "btn-hover",    "value": "0 4px 15px rgba(212, 175, 55, 0.4)", "purpose": "Primary button hover lift glow." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default transition easing for state changes." },
+      { "name": "duration-fast", "value": "200ms",  "purpose": "Micro-interactions: button hover, badge transition." },
+      { "name": "duration-base", "value": "300ms",  "purpose": "Standard: card hover lift, nav item highlight, input focus." },
+      { "name": "duration-slow", "value": "400ms",  "purpose": "Page section fade-in animation." },
+      { "name": "fade-in",       "value": "fadeIn 0.4s ease forwards", "purpose": "Page/section entrance animation — 10px upward drift." }
+    ],
+    "breakpoints": [
+      { "name": "mobile",  "value": "768px",  "purpose": "Below: sidebar becomes horizontal tabs, grid drops to 1 col." },
+      { "name": "desktop", "value": "769px",  "purpose": "Above: sidebar is 250px fixed, grid auto-fills." },
+      { "name": "wide",    "value": "1400px", "purpose": "Above: inventory min-width 300px, stats grid locks to 4 cols." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single primary action per surface. Gold gradient, black text, lifts on hover.",
+      "html": "<button class=\"ds-btn-primary\">Add New Item</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; background: linear-gradient(135deg, #D4AF37, #B8860B); color: #000; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 600; font-family: 'Outfit', sans-serif; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; } .ds-btn-primary:hover { background: linear-gradient(135deg, #F3CA47, #D4AF37); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.5); }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Ghost button for secondary actions. Near-invisible at rest.",
+      "html": "<button class=\"ds-btn-secondary\">Cancel</button>",
+      "css": ".ds-btn-secondary { background: rgba(255, 255, 255, 0.05); color: #F4F4F6; border: 1px solid rgba(255, 255, 255, 0.08); padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 500; font-family: 'Outfit', sans-serif; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; } .ds-btn-secondary:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); } .ds-btn-secondary:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(244, 244, 246, 0.2); }"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Inline compact danger action — deletes, removes.",
+      "html": "<button class=\"ds-btn-danger\">Delete</button>",
+      "css": ".ds-btn-danger { background: rgba(139, 28, 49, 0.2); color: #FF6B6B; border: 1px solid rgba(139, 28, 49, 0.5); padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s ease; font-family: 'Outfit', sans-serif; } .ds-btn-danger:hover { background: rgba(139, 28, 49, 0.4); border-color: #FF6B6B; }"
+    },
+    {
+      "name": "Glass Card",
+      "kind": "card",
+      "refersTo": "card-glass",
+      "description": "Primary content container. Glassmorphism surface, lifts 2px on hover with gold glow.",
+      "html": "<div class=\"ds-glass-card\"><h3>Model Name</h3><p>Card content goes here.</p></div>",
+      "css": ".ds-glass-card { background: rgba(22, 21, 30, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 1.5rem; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; } .ds-glass-card:hover { transform: translateY(-2px); box-shadow: 0 4px 30px rgba(212, 175, 55, 0.15); border-color: rgba(212, 175, 55, 0.3); }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "description": "Standard form input. Dark fill, ghost border, gold focus ring.",
+      "html": "<div class=\"ds-form-group\"><label class=\"ds-label\">Model Name</label><input class=\"ds-input\" type=\"text\" placeholder=\"e.g. Kanjivaram Red\" /></div>",
+      "css": ".ds-form-group { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; } .ds-label { font-size: 0.9rem; color: #A0A0A8; font-family: 'Outfit', sans-serif; } .ds-input { width: 100%; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.08); color: #F4F4F6; padding: 0.8rem 1rem; border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: 1rem; transition: all 0.3s ease; outline: none; } .ds-input:focus { border-color: #D4AF37; box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.15); } .ds-input::placeholder { color: #A0A0A8; }"
+    },
+    {
+      "name": "Nav Item",
+      "kind": "nav",
+      "description": "Sidebar navigation item. Transparent at rest, gold-tinted on active/hover.",
+      "html": "<a class=\"ds-nav-item ds-nav-item--active\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"7\"/><rect x=\"3\" y=\"14\" width=\"7\" height=\"7\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\"/></svg>Dashboard</a>",
+      "css": ".ds-nav-item { display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1rem; border-radius: 8px; color: #A0A0A8; text-decoration: none; font-weight: 500; font-family: 'Outfit', sans-serif; font-size: 0.95rem; transition: all 0.3s ease; cursor: pointer; } .ds-nav-item:hover, .ds-nav-item--active { background: rgba(212, 175, 55, 0.15); color: #D4AF37; }"
+    },
+    {
+      "name": "Status Badge",
+      "kind": "chip",
+      "description": "Pill-shaped status indicator. Three semantic variants: success (available), warning (low stock), info (partial).",
+      "html": "<span class=\"ds-badge ds-badge--success\">Available</span> <span class=\"ds-badge ds-badge--warning\">Low Stock</span> <span class=\"ds-badge ds-badge--info\">Partial</span>",
+      "css": ".ds-badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; font-family: 'Outfit', sans-serif; display: inline-block; } .ds-badge--success { background: rgba(46, 139, 87, 0.2); color: #4ade80; border: 1px solid rgba(46, 139, 87, 0.4); } .ds-badge--warning { background: rgba(212, 175, 55, 0.15); color: #D4AF37; border: 1px solid rgba(212, 175, 55, 0.3); } .ds-badge--info { background: rgba(65, 105, 225, 0.2); color: #60a5fa; border: 1px solid rgba(65, 105, 225, 0.4); }"
+    },
+    {
+      "name": "WhatsApp CTA",
+      "kind": "button",
+      "description": "Full-width catalog inquiry button. WhatsApp green, always inside a product card.",
+      "html": "<button class=\"ds-btn-whatsapp\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z\"/></svg> Inquire on WhatsApp</button>",
+      "css": ".ds-btn-whatsapp { width: 100%; background: #25D366; color: #fff; border: none; padding: 0.7rem; border-radius: 8px; display: flex; justify-content: center; align-items: center; gap: 0.5rem; font-weight: 600; cursor: pointer; font-family: 'Outfit', sans-serif; font-size: 0.9rem; transition: all 0.2s ease; } .ds-btn-whatsapp:hover { background: #1DAE51; transform: translateY(-1px); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Obsidian Showroom",
+    "overview": "Udupu is a dark, jewel-toned boutique catalog that makes every saree and dress feel like it belongs in an intimate high-end showroom. The near-black backgrounds recede completely, letting product imagery and the signature gold accent carry all the visual weight.\n\nThe interface is deliberately understated — muted matte surfaces, razor-thin glass borders, barely-there chrome — so that the gold moments (CTAs, nav highlights, prices) land with maximum authority.\n\nMotion is subtle and purposeful — a 0.3s ease on nearly everything, cards lifting 2px on hover, elements fading in with a 10px upward drift. The system is never flashy; it is merely, unfailingly precise.",
+    "keyCharacteristics": [
+      "Near-black canvas, glass-surface depth",
+      "Single gold accent; every other color serves a functional role",
+      "Outfit typeface — geometric, modern, and neutral",
+      "Glassmorphism cards with backdrop-blur as the primary elevation metaphor",
+      "Mobile-first gallery; sidebar-dominant admin"
+    ],
+    "rules": [
+      { "name": "The One Voice Rule", "body": "Gold is the only accent color used decoratively. Every other color (green, red, blue) is strictly functional — a status signal, never a style choice.", "section": "colors" },
+      { "name": "The Gradient Headline Rule", "body": "Brand headings use the gold-to-bright-gold linear gradient via background-clip: text. This treatment is reserved for the logo wordmark and the most prominent heading on each surface — never repeated more than once per screen.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Surfaces carry no shadow at rest. The gold glow appears only on hover or interaction, making its appearance feel like the surface responding to your intent, not decoration.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use --primary-gold (#D4AF37) as the singular accent — on no more than one primary action and one text highlight per screen.",
+      "Do apply backdrop-filter: blur(12px) to every floating surface (cards, modals, dropdowns) — it is the defining depth metaphor.",
+      "Do use the translateY(-2px) + gold glow combination for every interactive card hover.",
+      "Do lock product image aspect ratio to 4/5 (portrait) to preserve saree and dress photography proportions.",
+      "Do use the Outfit font across all text."
+    ],
+    "donts": [
+      "Don't introduce new decorative accent colors. Green is for sold/success, red is for danger, blue is for revenue.",
+      "Don't add box-shadows to elements at rest.",
+      "Don't use the gold gradient text treatment on more than one heading per screen.",
+      "Don't collapse backdrop-filter to zero on glass cards without providing a fallback background.",
+      "Don't break the 8px / 16px / 24px radius scale."
+    ]
+  }
+}

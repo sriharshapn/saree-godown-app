@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { X, Save, Tag } from 'lucide-react';
 
-function EditSareeModal({ saree, onClose, onSave }) {
-  const [modelName, setModelName] = useState(saree.modelName);
-  const [costPrice, setCostPrice] = useState(saree.costPrice.toString());
-  const [sellingPrice, setSellingPrice] = useState(saree.sellingPrice.toString());
-  const [salePrice, setSalePrice] = useState(saree.salePrice ? saree.salePrice.toString() : '');
-  const [quantity, setQuantity] = useState(saree.quantity.toString());
+function EditItemModal({ item, onClose, onSave }) {
+  const [modelName, setModelName] = useState(item.modelName);
+  const [costPrice, setCostPrice] = useState(item.costPrice.toString());
+  const [sellingPrice, setSellingPrice] = useState(item.sellingPrice.toString());
+  const [salePrice, setSalePrice] = useState(item.salePrice ? item.salePrice.toString() : '');
+  const [quantity, setQuantity] = useState(item.quantity.toString());
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -42,7 +42,7 @@ function EditSareeModal({ saree, onClose, onSave }) {
       quantity: Number(quantity)
     };
 
-    await onSave(saree.id, updates);
+    await onSave(item.id, updates, item.category);
     setSaving(false);
     onClose();
   };
@@ -55,7 +55,7 @@ function EditSareeModal({ saree, onClose, onSave }) {
     <div className="modal-overlay animate-fade-in">
       <div className="modal-content">
         <div className="flex-between" style={{ marginBottom: '1.5rem' }}>
-          <h2>Edit Saree</h2>
+          <h2>Edit Item</h2>
           <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
             <X size={24} />
           </button>
@@ -156,4 +156,4 @@ function EditSareeModal({ saree, onClose, onSave }) {
   );
 }
 
-export default EditSareeModal;
+export default EditItemModal;

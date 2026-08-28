@@ -2,86 +2,91 @@ export const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbypRfc9cta7Eq
 
 export function getDriveImageUrl(url) {
   if (!url) return '';
-  if (url.startsWith('data:image')) return url; // base64 preview
-
-  // Convert unreliable lh3 URLs to highly reliable Drive thumbnail API
-  if (url.includes('lh3.googleusercontent.com/d/')) {
-    const id = url.split('/d/')[1].split('/')[0].split('?')[0];
-    return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
+  // Check if it's already a direct viewing url or not a drive url
+  if (!url.includes('googleusercontent.com/d/') && !url.includes('drive.google.com/file/d/')) {
+    return url;
   }
   
-  // Convert standard Drive web URLs
-  if (url.includes('drive.google.com/file/d/')) {
-    const id = url.split('/file/d/')[1].split('/')[0];
-    return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
+  // Extract ID from lh3.googleusercontent.com/d/ID or drive.google.com/file/d/ID
+  const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (match && match[1]) {
+    // Generate a reliable thumbnail view URL instead of relying on the ephemeral lh3 link
+    return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`;
   }
-
+  
   return url;
 }
 
-export async function fetchSarees() {
+export async function fetchInventory() {
   try {
-    const response = await fetch(SCRIPT_URL);
+    const response = await fetch(SCRIPT_URL, {
+      method: 'GET'
+    });
     const text = await response.text();
-    const result = JSON.parse(text);
+    let result;
+    try {
+      result = JSON.parse(text);
+    } catch (e) {
+      console.error("Failed to parse JSON from Apps Script:", text);
+      return { inventory: [], sales: [] };
+    }
+    
     if (result.success && result.data) {
-      // Normalize data types from Google Sheets
-      const sarees = (result.data.sarees || []).map(s => ({
-        ...s,
-        rate: Number(s.rate) || 0,
-        status: String(s.status || 'available'),
-        modelName: String(s.modelName || ''),
-        costPrice: Number(s.costPrice) || Number(s.rate) || 0,
-        sellingPrice: Number(s.sellingPrice) || Number(s.rate) || 0,
-        salePrice: s.salePrice ? Number(s.salePrice) : null,
-        imageUrl: getDriveImageUrl(String(s.imageUrl || '')),
-        dateAdded: String(s.dateAdded || new Date().toISOString()),
-        dateSold: s.dateSold ? String(s.dateSold) : '',
-        soldPrice: Number(s.soldPrice) || 0,
-        quantity: Number(s.quantity) || 1,
-        soldQuantity: Number(s.soldQuantity) || 0
-      }));
-      
-      const sales = (result.data.sales || []).map(sale => ({
-        ...sale,
-        quantitySold: Number(sale.quantitySold) || 0,
-        pricePerPiece: Number(sale.pricePerPiece) || 0,
-        totalPrice: Number(sale.totalPrice) || 0,
-        dateSold: String(sale.dateSold || ''),
-        status: String(sale.status || 'completed'),
-        comment: String(sale.comment || '')
+      // Map the generic fields back to frontend expected fields if necessary, 
+      // but since backend headers are same, we just rename rate->costPrice
+      const inventory = (result.data.inventory || []).map(item => ({
+        id: item.id,
+        modelName: item.modelName,
+        costPrice: Number(item.rate),
+        sellingPrice: Number(item.sellingPrice),
+        salePrice: item.salePrice ? Number(item.salePrice) : null,
+        imageUrl: item.imageUrl,
+        status: item.status,
+        dateAdded: item.dateAdded,
+        dateSold: item.dateSold,
+        soldPrice: Number(item.soldPrice),
+        quantity: Number(item.quantity) || 1,
+        soldQuantity: Number(item.soldQuantity) || 0,
+        category: item.category || 'saree'
       }));
 
-      return { sarees, sales };
+      // Sort by date added (newest first)
+      inventory.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+
+      const sales = result.data.sales || [];
+      sales.sort((a, b) => new Date(b.dateSold) - new Date(a.dateSold));
+
+      return { inventory, sales };
+    } else {
+      console.error("API returned error:", result.error);
+      return { inventory: [], sales: [] };
     }
-    console.error('Sheets API error:', result.error);
-    return { sarees: [], sales: [] };
-  } catch (e) {
-    console.error('fetchSarees error:', e);
-    return { sarees: [], sales: [] };
+  } catch (error) {
+    console.error('Error fetching inventory:', error);
+    return { inventory: [], sales: [] };
   }
 }
 
-export async function addSaree(saree) {
+export async function addItem(item) {
   try {
     const response = await fetch(SCRIPT_URL, {
       method: 'POST',
-      body: JSON.stringify({ action: 'add', saree })
+      body: JSON.stringify({ action: 'add', item, category: item.category })
     });
     const text = await response.text();
     const result = JSON.parse(text);
     return result;
   } catch (e) {
-    console.error('addSaree failed:', e);
+    console.error('addItem failed:', e);
     return { success: false, error: e.message };
   }
 }
 
-export async function markSareeAsSold(id, soldPrice, sellQuantity) {
+export async function markItemAsSold(id, soldPrice, sellQuantity, category) {
   try {
     const response = await fetch(SCRIPT_URL, {
       method: 'POST',
-      body: JSON.stringify({ action: 'markSold', id, soldPrice, sellQuantity })
+      body: JSON.stringify({ action: 'markSold', id, soldPrice, sellQuantity, category })
     });
     const text = await response.text();
     const result = JSON.parse(text);
@@ -92,11 +97,11 @@ export async function markSareeAsSold(id, soldPrice, sellQuantity) {
   }
 }
 
-export async function deleteSareeFromCloud(id) {
+export async function deleteItemFromCloud(id, category) {
   try {
     const response = await fetch(SCRIPT_URL, {
       method: 'POST',
-      body: JSON.stringify({ action: 'delete', id })
+      body: JSON.stringify({ action: 'delete', id, category })
     });
     const text = await response.text();
     const result = JSON.parse(text);
@@ -106,11 +111,12 @@ export async function deleteSareeFromCloud(id) {
     return { success: false, error: e.message };
   }
 }
-export async function undoSale(transactionId, comment) {
+
+export async function undoSale(transactionId, comment, category) {
   try {
     const response = await fetch(SCRIPT_URL, {
       method: 'POST',
-      body: JSON.stringify({ action: 'undoSale', transactionId, comment })
+      body: JSON.stringify({ action: 'undoSale', transactionId, comment, category })
     });
     const text = await response.text();
     const result = JSON.parse(text);
@@ -121,17 +127,17 @@ export async function undoSale(transactionId, comment) {
   }
 }
 
-export async function editSaree(id, updates) {
+export async function editItem(id, updates, category) {
   try {
     const response = await fetch(SCRIPT_URL, {
       method: 'POST',
-      body: JSON.stringify({ action: 'edit', id, updates })
+      body: JSON.stringify({ action: 'edit', id, updates, category })
     });
     const text = await response.text();
     const result = JSON.parse(text);
     return result;
   } catch (e) {
-    console.error('editSaree failed:', e);
+    console.error('editItem failed:', e);
     return { success: false, error: e.message };
   }
 }

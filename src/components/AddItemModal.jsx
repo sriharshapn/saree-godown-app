@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { X, Save, Loader, Tag } from 'lucide-react';
 import imageCompression from 'browser-image-compression';
 
-function AddSareeModal({ onClose, onAdd }) {
+function AddItemModal({ onClose, onAdd }) {
+  const [category, setCategory] = useState('saree');
   const [modelName, setModelName] = useState('');
   const [costPrice, setCostPrice] = useState('');
   const [sellingPrice, setSellingPrice] = useState('');
@@ -89,7 +90,8 @@ function AddSareeModal({ onClose, onAdd }) {
         salePrice: salePrice ? Number(salePrice) : null,
         quantity: Number(quantity),
         imageUrl: finalImageUrl || '',
-        imageData
+        imageData,
+        category
       });
 
       setLoading(false);
@@ -106,7 +108,7 @@ function AddSareeModal({ onClose, onAdd }) {
     <div className="modal-overlay animate-fade-in">
       <div className="modal-content">
         <div className="flex-between" style={{ marginBottom: '1.5rem' }}>
-          <h2>Add New Saree</h2>
+          <h2>Add New Item</h2>
           <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }} disabled={loading}>
             <X size={24} />
           </button>
@@ -119,6 +121,19 @@ function AddSareeModal({ onClose, onAdd }) {
         )}
 
         <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Category *</label>
+            <select 
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              disabled={loading}
+              style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(0,0,0,0.2)', color: 'white', marginBottom: '1rem' }}
+            >
+              <option value="saree">Saree</option>
+              <option value="dress">Dress</option>
+            </select>
+          </div>
+
           <div className="form-group">
             <label>Model Name *</label>
             <input 
@@ -246,7 +261,7 @@ function AddSareeModal({ onClose, onAdd }) {
             </button>
             <button type="submit" className="btn-primary" style={{ flex: 1 }} disabled={loading}>
               {loading ? <Loader className="animate-spin" size={18} /> : <Save size={18} />}
-              {loading ? loadingText : 'Save Saree'}
+              {loading ? loadingText : 'Save Item'}
             </button>
           </div>
         </form>
@@ -255,4 +270,4 @@ function AddSareeModal({ onClose, onAdd }) {
   );
 }
 
-export default AddSareeModal;
+export default AddItemModal;
