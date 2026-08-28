@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { X, IndianRupee } from 'lucide-react';
 
-function MarkSoldModal({ saree, onClose, onConfirm }) {
-  const availableQty = saree.quantity - saree.soldQuantity;
+function MarkSoldModal({ item, onClose, onConfirm }) {
+  const availableQty = item.quantity - item.soldQuantity;
   const [sellQuantity, setSellQuantity] = useState('1');
-  const [pricePerPiece, setPricePerPiece] = useState((saree.sellingPrice || saree.costPrice || 0).toString());
+  const [pricePerPiece, setPricePerPiece] = useState((item.sellingPrice || item.costPrice || 0).toString());
   const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
@@ -25,7 +25,7 @@ function MarkSoldModal({ saree, onClose, onConfirm }) {
       return;
     }
 
-    onConfirm(saree.id, price, qty);
+    onConfirm(item.id, price, qty);
     onClose();
   };
 
@@ -40,13 +40,13 @@ function MarkSoldModal({ saree, onClose, onConfirm }) {
         </div>
 
         <p style={{ color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
-          Model: <strong style={{ color: 'var(--text-main)' }}>{saree.modelName}</strong>
+          Model: <strong style={{ color: 'var(--text-main)' }}>{item.modelName}</strong>
         </p>
         <p style={{ color: 'var(--text-muted)', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
-          Original rate: <span style={{ color: 'var(--primary-gold)' }}>₹{(saree.costPrice || 0).toLocaleString('en-IN')}</span> per piece
+          Original rate: <span style={{ color: 'var(--primary-gold)' }}>₹{(item.costPrice || 0).toLocaleString('en-IN')}</span> per piece
         </p>
         <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
-          Available: <strong style={{ color: 'var(--text-main)' }}>{availableQty}</strong> of {saree.quantity} pieces
+          Available: <strong style={{ color: 'var(--text-main)' }}>{availableQty}</strong> of {item.quantity} pieces
         </p>
 
         {error && (
