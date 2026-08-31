@@ -42,36 +42,38 @@ function ShareImagesModal({ items, onClose }) {
     setFetchStatus(loadingStatus);
 
     const files = [];
+    const fallbackUrls = [];
     const nextStatus = { ...loadingStatus };
 
     for (const item of resolved) {
       if (!item.resolvedUrl) {
         nextStatus[item.id] = 'error';
+        setFetchStatus({ ...nextStatus });
         continue;
       }
       try {
         const file = await fetchImageAsFile(item.resolvedUrl, toFilename(item.modelName));
-        files.push(file);
-        nextStatus[item.id] = 'done';
+        if (file) {
+          files.push(file);
+          nextStatus[item.id] = 'done';
+        } else {
+          // CORS blocked — canvas capture not possible, will fall back to URL sharing
+          fallbackUrls.push(item.resolvedUrl);
+          nextStatus[item.id] = 'done'; // still mark done, will be shared as link
+        }
       } catch (e) {
-        console.error('Failed to fetch image for', item.modelName, e);
+        console.error('Failed to capture image for', item.modelName, e);
         nextStatus[item.id] = 'error';
       }
       setFetchStatus({ ...nextStatus });
     }
 
-    if (files.length === 0) {
-      setGlobalError('Could not load any images. Please check your internet connection.');
-      setIsSharing(false);
-      return;
-    }
-
     try {
-      await shareFiles(files, message);
-      setSuccessMsg('Shared successfully!');
+      await shareFiles(files, message, fallbackUrls);
+      setSuccessMsg(files.length > 0 ? 'Shared as images!' : 'Shared image links!');
     } catch (e) {
       if (e.name !== 'AbortError') {
-        setGlobalError('Share was cancelled or failed. You can use "Download All" instead.');
+        setGlobalError('Share cancelled. Try "Download All" instead.');
       }
     }
     setIsSharing(false);
@@ -102,11 +104,11 @@ function ShareImagesModal({ items, onClose }) {
         nextStatus[item.id] = 'error';
       }
       setFetchStatus({ ...nextStatus });
-      // Small delay between downloads to avoid browser blocking
-      await new Promise(r => setTimeout(r, 300));
+      await new Promise(r => setTimeout(r, 400));
     }
 
-    setSuccessMsg(`Downloaded ${Object.values(nextStatus).filter(s => s === 'done').length} image(s)!`);
+    const doneCount = Object.values(nextStatus).filter(s => s === 'done').length;
+    setSuccessMsg(`${doneCount} image${doneCount !== 1 ? 's' : ''} opened for download!`);
     setIsDownloading(false);
   };
 
