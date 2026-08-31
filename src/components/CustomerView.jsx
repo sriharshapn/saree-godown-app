@@ -142,22 +142,41 @@ function CustomerView({ inventory, onAdminClick }) {
         </div>
       </header>
 
-      {/* ── Mobile: category tabs + search ── */}
+      {/* ── Mobile: category tabs + search + admin ── */}
       <div className="customer-mobile-controls" style={{ display: 'none', padding: '1rem 1rem 0' }}>
         <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.75rem', scrollbarWidth: 'none' }}>
           <CategoryBtn value="all" label="All" />
           <CategoryBtn value="saree" label="Sarees" />
           <CategoryBtn value="dress" label="Dresses" />
         </div>
-        <div style={{ position: 'relative', marginBottom: '0.5rem' }}>
-          <Search size={16} style={{ position: 'absolute', left: '0.9rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-          <input
-            type="text"
-            placeholder="Search collection..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: '100%', paddingLeft: '2.4rem', borderRadius: '30px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', fontFamily: 'Outfit, sans-serif' }}
-          />
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem', alignItems: 'center' }}>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <Search size={16} style={{ position: 'absolute', left: '0.9rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+            <input
+              type="text"
+              placeholder="Search collection..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ width: '100%', paddingLeft: '2.4rem', borderRadius: '30px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', fontFamily: 'Outfit, sans-serif' }}
+            />
+          </div>
+          <button
+            onClick={onAdminClick}
+            style={{
+              background: 'transparent',
+              border: '1px solid rgba(255,255,255,0.12)',
+              color: 'var(--text-muted)',
+              fontSize: '0.78rem',
+              cursor: 'pointer',
+              padding: '0.5rem 0.8rem',
+              borderRadius: '8px',
+              fontFamily: 'Outfit, sans-serif',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+            }}
+          >
+            Admin
+          </button>
         </div>
       </div>
 

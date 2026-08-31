@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
 import { X, Save, Loader, Tag, Plus } from 'lucide-react';
 import imageCompression from 'browser-image-compression';
 
@@ -127,7 +128,7 @@ function AddItemModal({ onClose, onAdd, defaultCategory = 'saree' }) {
     }
   };
 
-  return (
+  return ReactDOM.createPortal(
     <div className="modal-overlay animate-fade-in">
       <div className="modal-content">
         <div className="flex-between" style={{ marginBottom: '1.5rem' }}>
@@ -281,7 +282,8 @@ function AddItemModal({ onClose, onAdd, defaultCategory = 'saree' }) {
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
