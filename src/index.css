@@ -411,3 +411,157 @@ input:focus, select:focus, textarea:focus {
     gap: 2rem;
   }
 }
+
+/* ========== Share Feature Styles ========== */
+
+/* Floating selection action bar */
+.selection-bar {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-secondary);
+  border: 1px solid var(--primary-gold);
+  border-radius: 100px;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.15);
+  z-index: 900;
+  animation: fadeIn 0.2s ease;
+  white-space: nowrap;
+}
+
+/* Gold border glow on selected cards */
+.card-selected {
+  border-color: var(--primary-gold) !important;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.3), var(--shadow-glow) !important;
+}
+
+/* Checkbox overlay on card image */
+.select-toggle-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 8px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  z-index: 2;
+}
+
+.select-toggle-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* Share button (green) */
+.btn-share {
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-share:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2be573, #1aac9e);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+}
+
+.btn-share:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Download button */
+.btn-download {
+  background: rgba(65, 105, 225, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(65, 105, 225, 0.4);
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-download:hover:not(:disabled) {
+  background: rgba(65, 105, 225, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-download:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Image preview grid in ShareImagesModal */
+.image-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.75rem;
+}
+
+.image-preview-item {
+  position: relative;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  background: rgba(0,0,0,0.3);
+}
+
+.image-preview-item img {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  display: block;
+}
+
+.image-preview-placeholder {
+  width: 100%;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.image-preview-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-preview-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  padding: 0.3rem 0.4rem;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+

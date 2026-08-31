@@ -1,5 +1,5 @@
 import React from 'react';
-import { IndianRupee, Trash2, CheckCircle, Clock, Pencil, Tag } from 'lucide-react';
+import { IndianRupee, Trash2, CheckCircle, Clock, Pencil, Tag, CheckSquare, Square } from 'lucide-react';
 import { getDriveImageUrl } from '../sheetsClient';
 
 function formatDate(dateStr) {
@@ -10,7 +10,7 @@ function formatDate(dateStr) {
     + ' ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
 }
 
-function ItemCard({ item, onMarkSold, onDelete, onEdit }) {
+function ItemCard({ item, onMarkSold, onDelete, onEdit, selectionMode = false, isSelected = false, onToggleSelect }) {
   const isSold = item.status === 'sold';
   const isPartial = item.status === 'partial';
   const availableQty = item.quantity - item.soldQuantity;
@@ -22,7 +22,11 @@ function ItemCard({ item, onMarkSold, onDelete, onEdit }) {
   const firstImageUrl = item.imageUrl ? item.imageUrl.split(',')[0] : null;
 
   return (
-    <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', overflow: 'hidden', padding: 0 }}>
+    <div
+      className={`glass-card${isSelected ? ' card-selected' : ''}`}
+      style={{ display: 'flex', flexDirection: 'column', gap: '1rem', overflow: 'hidden', padding: 0, cursor: selectionMode ? 'pointer' : 'default' }}
+      onClick={selectionMode && onToggleSelect ? onToggleSelect : undefined}
+    >
       <div style={{ position: 'relative', height: '250px', backgroundColor: 'rgba(0,0,0,0.3)' }}>
         {firstImageUrl ? (
           <img 
@@ -34,6 +38,18 @@ function ItemCard({ item, onMarkSold, onDelete, onEdit }) {
         ) : (
           <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
             No Image
+          </div>
+        )}
+        {/* Selection checkbox overlay */}
+        {selectionMode && (
+          <div
+            className="select-toggle-btn"
+            onClick={e => { e.stopPropagation(); if (onToggleSelect) onToggleSelect(); }}
+          >
+            {isSelected
+              ? <CheckSquare size={22} style={{ color: 'var(--primary-gold)' }} />
+              : <Square size={22} style={{ color: 'rgba(255,255,255,0.8)' }} />
+            }
           </div>
         )}
         <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
