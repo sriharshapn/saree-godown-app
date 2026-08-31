@@ -663,3 +663,37 @@ input:focus, select:focus, textarea:focus {
     gap: 1rem !important;
   }
 }
+
+/* ── Product image zoom hint ── */
+.product-zoom-hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: rgba(0,0,0,0);
+  transition: background 0.25s ease;
+  z-index: 1;
+  pointer-events: none; /* clicks fall through to the image container */
+  opacity: 0;
+  transition: opacity 0.25s ease, background 0.25s ease;
+}
+
+/* Show on hover (desktop) */
+.saree-card:hover .product-zoom-hint {
+  opacity: 1;
+  background: rgba(0,0,0,0.28);
+}
+
+/* Always show a faint hint on touch devices */
+@media (hover: none) {
+  .product-zoom-hint {
+    opacity: 0.6;
+    background: transparent;
+    justify-content: flex-end;
+    padding-bottom: 0.6rem;
+    font-size: 0.72rem;
+  }
+}

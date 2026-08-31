@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { getDriveImageUrl } from '../sheetsClient';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
+import ImageLightbox from './ImageLightbox';
 
 function ProductCard({ item, onWhatsAppClick }) {
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const rawImageUrls = item.imageUrl ? item.imageUrl.split(',').filter(Boolean) : [];
-  // For data URIs (local optimistic UI) vs Drive URLs
   const imageUrls = rawImageUrls.map(url => getDriveImageUrl(url));
   const hasImages = imageUrls.length > 0;
   const isMultiple = imageUrls.length > 1;
@@ -29,7 +30,11 @@ function ProductCard({ item, onWhatsAppClick }) {
       borderRadius: '16px',
       overflow: 'hidden'
     }}>
-      <div style={{ position: 'relative', width: '100%', paddingTop: '133%' /* 3:4 aspect ratio */, backgroundColor: '#111' }}>
+      {/* Image area — click to open lightbox */}
+      <div
+        style={{ position: 'relative', width: '100%', paddingTop: '133%', backgroundColor: '#111', cursor: hasImages ? 'zoom-in' : 'default' }}
+        onClick={() => hasImages && setLightboxOpen(true)}
+      >
         {hasImages ? (
           <>
             <img 
@@ -40,6 +45,13 @@ function ProductCard({ item, onWhatsAppClick }) {
                 position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover'
               }}
             />
+
+            {/* Zoom hint overlay (shown on hover via CSS) */}
+            <div className="product-zoom-hint">
+              <ZoomIn size={20} style={{ marginBottom: '4px' }} />
+              <span style={{ fontSize: '0.75rem' }}>Tap to view</span>
+            </div>
+
             {isMultiple && (
               <>
                 <button 
@@ -130,6 +142,15 @@ function ProductCard({ item, onWhatsAppClick }) {
           {item.quantity === 0 ? 'Out of Stock' : 'Enquire on WhatsApp'}
         </button>
       </div>
+
+      {/* Lightbox */}
+      {lightboxOpen && (
+        <ImageLightbox
+          urls={imageUrls}
+          startIndex={currentImgIndex}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
     </div>
   );
 }
