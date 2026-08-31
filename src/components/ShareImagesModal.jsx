@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { X, Share2, Download, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { getDriveImageUrl } from '../sheetsClient';
 import { fetchImageAsFile, shareFiles, downloadImage, canShareFiles, toFilename } from '../utils/imageShare';
@@ -112,7 +113,7 @@ function ShareImagesModal({ items, onClose }) {
   const resolved = getImageUrls();
   const busy = isSharing || isDownloading;
 
-  return (
+  return ReactDOM.createPortal(
     <div className="modal-overlay" onClick={!busy ? onClose : undefined}>
       <div
         className="modal-content"
@@ -227,7 +228,8 @@ function ShareImagesModal({ items, onClose }) {
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

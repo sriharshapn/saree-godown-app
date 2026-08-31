@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
 import { X, IndianRupee } from 'lucide-react';
 
 function MarkSoldModal({ item, onClose, onConfirm }) {
@@ -29,7 +30,7 @@ function MarkSoldModal({ item, onClose, onConfirm }) {
     onClose();
   };
 
-  return (
+  return ReactDOM.createPortal(
     <div className="modal-overlay animate-fade-in">
       <div className="modal-content" style={{ maxWidth: '420px' }}>
         <div className="flex-between" style={{ marginBottom: '1.5rem' }}>
@@ -101,7 +102,8 @@ function MarkSoldModal({ item, onClose, onConfirm }) {
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

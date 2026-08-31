@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
 import { X, Save, Tag } from 'lucide-react';
 
 function EditItemModal({ item, onClose, onSave }) {
@@ -51,7 +52,7 @@ function EditItemModal({ item, onClose, onSave }) {
     setSalePrice('');
   };
 
-  return (
+  return ReactDOM.createPortal(
     <div className="modal-overlay animate-fade-in">
       <div className="modal-content">
         <div className="flex-between" style={{ marginBottom: '1.5rem' }}>
@@ -152,7 +153,8 @@ function EditItemModal({ item, onClose, onSave }) {
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
