@@ -116,7 +116,7 @@ function ProductCard({ item, onWhatsAppClick }) {
       <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
         <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem', color: 'white', lineHeight: 1.3 }}>{item.modelName}</h3>
         
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '0.4rem' }}>
           {item.salePrice ? (
             <>
               <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--primary-gold)' }}>
@@ -132,6 +132,27 @@ function ProductCard({ item, onWhatsAppClick }) {
             </span>
           )}
         </div>
+
+        {/* Available quantity */}
+        {item.quantity > 0 && (() => {
+          const available = item.quantity - (item.soldQuantity || 0);
+          if (available <= 0) return null;
+          const isLow = available <= 3;
+          return (
+            <p style={{
+              fontSize: '0.8rem',
+              fontWeight: 500,
+              color: isLow ? '#f59e0b' : 'var(--text-muted)',
+              marginBottom: '0.75rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+            }}>
+              {isLow && <span style={{ fontSize: '0.7rem' }}>⚠️</span>}
+              {available} {available === 1 ? 'piece' : 'pieces'} available
+            </p>
+          );
+        })()}
 
         <button 
           className="btn-primary" 
