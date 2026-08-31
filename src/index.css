@@ -249,6 +249,7 @@ input:focus, select:focus, textarea:focus {
   top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -265,6 +266,46 @@ input:focus, select:focus, textarea:focus {
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  /* Smooth scrolling for iOS */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Mobile: bottom-sheet modals ── */
+@media (max-width: 640px) {
+  .modal-overlay {
+    align-items: flex-end;
+  }
+
+  .modal-content {
+    width: 100%;
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 20px 20px 0 0;
+    border-bottom: none;
+    padding: 1.25rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom));
+    animation: slideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  }
+
+  /* Drag-handle visual hint */
+  .modal-content::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+    margin: 0 auto 1.25rem;
+  }
+
+  /* Stack side-by-side price fields vertically on mobile */
+  .modal-price-row {
+    flex-direction: column !important;
+  }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0.5; }
+  to   { transform: translateY(0);    opacity: 1; }
 }
 
 /* Animations */
@@ -565,3 +606,60 @@ input:focus, select:focus, textarea:focus {
   text-overflow: ellipsis;
 }
 
+/* ── Mobile overrides for share/selection features ── */
+@media (max-width: 640px) {
+  /* Selection bar: stretch full width at very bottom, account for home bar */
+  .selection-bar {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: none;
+    border-radius: 16px 16px 0 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    padding: 0.75rem 1.25rem calc(0.75rem + env(safe-area-inset-bottom));
+    justify-content: space-between;
+    white-space: normal;
+    gap: 0.75rem;
+  }
+
+  /* Shrink share/clear buttons to fit */
+  .selection-bar .btn-share,
+  .selection-bar .btn-secondary {
+    padding: 0.5rem 0.9rem;
+    font-size: 0.88rem;
+  }
+
+  /* Image preview: 3-column grid on mobile */
+  .image-preview-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+
+  .image-preview-item img,
+  .image-preview-placeholder {
+    height: 85px;
+  }
+
+  /* Share/Download buttons: stack vertically in modal */
+  .btn-share,
+  .btn-download {
+    min-width: 0 !important;
+    width: 100%;
+    padding: 0.9rem 1rem;
+    font-size: 1rem;
+  }
+
+  /* Touch-friendly: bigger tap targets for icon buttons */
+  .select-toggle-btn {
+    padding: 6px;
+    border-radius: 10px;
+  }
+
+  /* Admin inventory: hide action buttons in normal mode, keep layout clean */
+  .grid-cards {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
+    gap: 1rem !important;
+  }
+}

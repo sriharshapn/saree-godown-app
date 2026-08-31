@@ -57,7 +57,7 @@ function MarkSoldModal({ item, onClose, onConfirm }) {
         )}
 
         <form onSubmit={handleSubmit}>
-          <div style={{ display: 'flex', gap: '1rem' }}>
+          <div className="modal-price-row" style={{ display: 'flex', gap: '1rem' }}>
             <div className="form-group" style={{ flex: 1 }}>
               <label>Quantity to sell *</label>
               <input

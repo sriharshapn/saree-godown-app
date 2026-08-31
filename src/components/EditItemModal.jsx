@@ -79,7 +79,7 @@ function EditItemModal({ item, onClose, onSave }) {
             />
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem' }}>
+          <div className="modal-price-row" style={{ display: 'flex', gap: '1rem' }}>
             <div className="form-group" style={{ flex: 1 }}>
               <label>Cost Price (₹) *</label>
               <input 

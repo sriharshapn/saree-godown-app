@@ -169,7 +169,7 @@ function AddItemModal({ onClose, onAdd, defaultCategory = 'saree' }) {
             />
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+          <div className="modal-price-row" style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
             <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
               <label>Cost Price (₹) *</label>
               <input 
