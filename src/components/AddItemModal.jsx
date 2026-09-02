@@ -77,61 +77,37 @@ function AddItemModal({ onClose, onAdd, defaultCategory = 'saree' }) {
     }
 
     setLoading(true);
+    setLoadingText('Compressing images...');
 
     try {
+      const imageDatas = [];
       const externalUrls = [];
-      const compressedImageDatas = [];
 
-      // Separate URLs from file uploads
       for (const img of images) {
-        if (img.type === 'url') {
-          externalUrls.push(img.url);
-        } else if (img.type === 'file') {
-          setLoadingText(`Compressing image ${compressedImageDatas.length + 1}...`);
+        if (img.type === 'file') {
           let fileToProcess = img.file;
           try {
-            // Compress aggressively — target 0.1 MB max to stay well within Apps Script limits
+            // Compress very aggressively — 50KB max so all images fit in one request
             fileToProcess = await imageCompression(img.file, {
-              maxSizeMB: 0.1,
-              maxWidthOrHeight: 600,
+              maxSizeMB: 0.05,
+              maxWidthOrHeight: 500,
               useWebWorker: false,
-              initialQuality: 0.5
+              initialQuality: 0.4
             });
           } catch (compressionError) {
             console.warn('Compression failed, using original', compressionError);
           }
           const base64 = await fileToBase64(fileToProcess);
-          compressedImageDatas.push(base64);
+          imageDatas.push(base64);
+        } else {
+          externalUrls.push(img.url);
         }
       }
 
+      setLoadingText('Saving...');
       const generateId = () => (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
       const id = generateId();
 
-      // Upload images one-by-one to avoid Apps Script timeout
-      const driveUrls = [...externalUrls];
-      for (let i = 0; i < compressedImageDatas.length; i++) {
-        setLoadingText(`Uploading image ${i + 1} of ${compressedImageDatas.length}...`);
-        try {
-          const res = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-              action: 'uploadImage',
-              imageData: compressedImageDatas[i],
-              fileId: id + '_' + i
-            })
-          });
-          const text = await res.text();
-          const result = JSON.parse(text);
-          if (result.success && result.url) {
-            driveUrls.push(result.url);
-          }
-        } catch (uploadErr) {
-          console.warn('Image upload failed for image', i, uploadErr);
-        }
-      }
-
-      setLoadingText('Saving item...');
       await onAdd({
         id,
         modelName,
@@ -139,9 +115,8 @@ function AddItemModal({ onClose, onAdd, defaultCategory = 'saree' }) {
         sellingPrice: Number(sellingPrice),
         salePrice: salePrice ? Number(salePrice) : null,
         quantity: Number(quantity),
-        imageUrl: driveUrls.join(','),
-        // No imageDatas — images already uploaded individually above
-        imageDatas: undefined,
+        imageUrl: externalUrls.join(','),
+        imageDatas: imageDatas.length > 0 ? imageDatas : undefined,
         category
       });
 
