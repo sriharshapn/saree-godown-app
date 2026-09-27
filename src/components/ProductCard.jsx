@@ -114,7 +114,7 @@ function ProductCard({ item, onWhatsAppClick }) {
       </div>
 
       <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-        <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem', color: 'white', lineHeight: 1.3 }}>{item.modelName}</h3>
+        <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem', color: 'var(--text-main)', lineHeight: 1.3 }}>{item.modelName}</h3>
         
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '0.4rem' }}>
           {item.salePrice ? (
