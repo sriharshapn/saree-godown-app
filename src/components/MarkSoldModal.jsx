@@ -5,7 +5,7 @@ import { X, IndianRupee } from 'lucide-react';
 function MarkSoldModal({ item, onClose, onConfirm }) {
   const availableQty = item.quantity - item.soldQuantity;
   const [sellQuantity, setSellQuantity] = useState('1');
-  const [pricePerPiece, setPricePerPiece] = useState((item.sellingPrice || item.costPrice || 0).toString());
+  const [pricePerPiece, setPricePerPiece] = useState((item.salePrice || item.sellingPrice || item.costPrice || 0).toString());
   const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
@@ -44,8 +44,18 @@ function MarkSoldModal({ item, onClose, onConfirm }) {
           Model: <strong style={{ color: 'var(--text-main)' }}>{item.modelName}</strong>
         </p>
         <p style={{ color: 'var(--text-muted)', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
-          Original rate: <span style={{ color: 'var(--primary-gold)' }}>₹{(item.costPrice || 0).toLocaleString('en-IN')}</span> per piece
+          Cost rate: <span style={{ color: 'var(--primary-gold)' }}>₹{(item.costPrice || 0).toLocaleString('en-IN')}</span> per piece
         </p>
+        {item.salePrice ? (
+          <p style={{ color: 'var(--text-muted)', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+            Sale price: <span style={{ color: '#FF6B6B', fontWeight: 'bold' }}>₹{item.salePrice.toLocaleString('en-IN')}</span> 
+            <span style={{textDecoration: 'line-through', marginLeft: '8px', fontSize: '0.8rem'}}>₹{item.sellingPrice.toLocaleString('en-IN')}</span>
+          </p>
+        ) : (
+          <p style={{ color: 'var(--text-muted)', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+            Selling price: <span style={{ color: 'var(--primary-gold)', fontWeight: 'bold' }}>₹{(item.sellingPrice || 0).toLocaleString('en-IN')}</span> per piece
+          </p>
+        )}
         <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
           Available: <strong style={{ color: 'var(--text-main)' }}>{availableQty}</strong> of {item.quantity} pieces
         </p>

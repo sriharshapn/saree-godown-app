@@ -197,17 +197,40 @@ function App() {
   };
 
   const editItem = async (id, updates, category) => {
-    const updatedInventory = inventory.map(s => 
-      s.id === id ? { ...s, ...updates, category } : s
-    );
+    // Separate out heavy imageDatas so we don't crash localStorage
+    const { imageDatas, ...cleanUpdates } = updates;
+    
+    let tempImageUrl = cleanUpdates.imageUrl || '';
+    if (imageDatas && imageDatas.length > 0) {
+      const pre = tempImageUrl ? tempImageUrl + ',' : '';
+      tempImageUrl = pre + `data:image/jpeg;base64,${imageDatas[0]}`;
+    }
+    
+    const updatedInventory = inventory.map(s => {
+      if (s.id === id) {
+        return { 
+          ...s, 
+          ...cleanUpdates, 
+          category,
+          imageUrl: (imageDatas && imageDatas.length > 0) ? tempImageUrl : (cleanUpdates.imageUrl !== undefined ? cleanUpdates.imageUrl : s.imageUrl)
+        };
+      }
+      return s;
+    });
+    
     updateInventoryCache(updatedInventory);
 
     try {
       const res = await editItemAPI(id, updates, category);
       if (res && res.success === false) {
         alert("Failed to edit item: " + (res.error || "Unknown error. Did you forget to deploy the new Google Apps Script?"));
+        loadInventory(true);
+      } else if (imageDatas && imageDatas.length > 0) {
+        // Refetch in background after 3.5s to get official Google Drive link
+        setTimeout(() => {
+          loadInventory(true);
+        }, 3500);
       }
-      loadInventory(true);
     } catch (e) {
       console.error("Error editing item:", e);
       alert("Error saving edit. Please check your connection.");
