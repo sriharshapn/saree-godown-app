@@ -25,7 +25,7 @@ function ProductCard({ item, onWhatsAppClick }) {
   return (
     <div className="saree-card animate-fade-in" style={{ 
       display: 'flex', flexDirection: 'column',
-      background: 'rgba(255, 255, 255, 0.03)',
+      background: 'var(--overlay-light)',
       border: '1px solid var(--glass-border)',
       borderRadius: '16px',
       overflow: 'hidden'
@@ -105,7 +105,7 @@ function ProductCard({ item, onWhatsAppClick }) {
         {item.quantity === 0 && (
           <div style={{
             position: 'absolute', top: '10px', right: '10px',
-            background: '#FF6B6B', color: 'white', padding: '4px 12px',
+            background: 'var(--status-danger)', color: 'white', padding: '4px 12px',
             borderRadius: '20px', fontSize: '0.75rem', fontWeight: 'bold', zIndex: 2
           }}>
             SOLD OUT

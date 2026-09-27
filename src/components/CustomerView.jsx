@@ -129,7 +129,7 @@ function CustomerView({ inventory, onAdminClick, theme, toggleTheme }) {
             onClick={onAdminClick}
             style={{
               background: 'transparent',
-              border: '1px solid rgba(255,255,255,0.08)',
+              border: '1px solid var(--glass-border)',
               color: 'var(--text-muted)',
               fontSize: '0.78rem',
               cursor: 'pointer',
@@ -175,7 +175,7 @@ function CustomerView({ inventory, onAdminClick, theme, toggleTheme }) {
             onClick={onAdminClick}
             style={{
               background: 'transparent',
-              border: '1px solid rgba(255,255,255,0.12)',
+              border: '1px solid var(--glass-border)',
               color: 'var(--text-muted)',
               fontSize: '0.78rem',
               cursor: 'pointer',
@@ -294,7 +294,7 @@ function CustomerView({ inventory, onAdminClick, theme, toggleTheme }) {
                 ].map(({ day, time }) => (
                   <div key={day} style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
                     <span style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>{day}</span>
-                    <span style={{ color: time === 'Closed' ? '#FF6B6B' : 'var(--text-main)', fontSize: '0.82rem', fontWeight: 500 }}>{time}</span>
+                    <span style={{ color: time === 'Closed' ? 'var(--status-danger)' : 'var(--text-main)', fontSize: '0.82rem', fontWeight: 500 }}>{time}</span>
                   </div>
                 ))}
               </div>

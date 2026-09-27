@@ -97,9 +97,9 @@ function Dashboard({ inventory, sales }) {
         <div className="glass-card">
           <div className="flex-between" style={{ marginBottom: '1rem' }}>
             <span style={{ color: 'var(--text-muted)' }}>Realized Profit</span>
-            <TrendingUp size={20} color={realizedProfit >= 0 ? '#4ade80' : '#FF6B6B'} />
+            <TrendingUp size={20} color={realizedProfit >= 0 ? 'var(--status-success)' : 'var(--status-danger)'} />
           </div>
-          <h3 style={{ fontSize: '2rem', color: realizedProfit >= 0 ? '#4ade80' : '#FF6B6B' }}>
+          <h3 style={{ fontSize: '2rem', color: realizedProfit >= 0 ? 'var(--status-success)' : 'var(--status-danger)' }}>
             {realizedProfit >= 0 ? '+' : '-'}₹{Math.abs(realizedProfit).toLocaleString('en-IN')}
           </h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.5rem' }}>Actual profit from sales</p>
@@ -114,10 +114,10 @@ function Dashboard({ inventory, sales }) {
           </h3>
           <div style={{ textAlign: 'center', padding: '1rem 0' }}>
             <div style={{ position: 'relative', width: '200px', height: '100px', margin: '0 auto', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, width: '200px', height: '200px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)', border: '20px solid rgba(255,255,255,0.1)', boxSizing: 'border-box', borderBottomColor: 'transparent', borderRightColor: 'transparent', transform: 'rotate(-45deg)' }}></div>
+              <div style={{ position: 'absolute', top: 0, left: 0, width: '200px', height: '200px', borderRadius: '50%', background: 'var(--overlay-light)', border: '20px solid var(--overlay-hover)', boxSizing: 'border-box', borderBottomColor: 'transparent', borderRightColor: 'transparent', transform: 'rotate(-45deg)' }}></div>
               <div style={{ position: 'absolute', top: 0, left: 0, width: '200px', height: '200px', borderRadius: '50%', border: '20px solid #4ade80', boxSizing: 'border-box', borderBottomColor: 'transparent', borderRightColor: 'transparent', transform: `rotate(${Math.min(-45 + (profitMarginPercent * 1.8), 135)}deg)`, transition: 'transform 1s ease-out' }}></div>
             </div>
-            <h2 style={{ fontSize: '2.5rem', marginTop: '-20px', color: '#4ade80' }}>{profitMarginPercent}%</h2>
+            <h2 style={{ fontSize: '2.5rem', marginTop: '-20px', color: 'var(--status-success)' }}>{profitMarginPercent}%</h2>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Average margin on sold items</p>
           </div>
         </div>
@@ -130,7 +130,7 @@ function Dashboard({ inventory, sales }) {
           {mostSold.length > 0 ? (
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {mostSold.map((m, i) => (
-                <li key={m.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.8rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
+                <li key={m.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.8rem', background: 'var(--overlay-light)', borderRadius: '8px' }}>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <span style={{ color: 'var(--primary-gold)', fontWeight: 'bold' }}>#{i+1}</span>
                     {m.name}
@@ -152,9 +152,9 @@ function Dashboard({ inventory, sales }) {
           {leastSold.length > 0 ? (
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {leastSold.map((m, i) => (
-                <li key={m.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.8rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
+                <li key={m.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.8rem', background: 'var(--overlay-light)', borderRadius: '8px' }}>
                   <span>{m.name}</span>
-                  <span className="badge" style={{ background: 'rgba(255,107,107,0.2)', color: '#FF6B6B' }}>{m.count} sold</span>
+                  <span className="badge" style={{ background: 'rgba(255,107,107,0.2)', color: 'var(--status-danger)' }}>{m.count} sold</span>
                 </li>
               ))}
             </ul>
@@ -207,7 +207,7 @@ function Dashboard({ inventory, sales }) {
                 <Tooltip 
                   contentStyle={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--glass-border)', borderRadius: '8px' }}
                   itemStyle={{ color: 'var(--primary-gold)' }}
-                  cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                  cursor={{ fill: 'var(--overlay-light)' }}
                 />
                 <Bar dataKey="count" fill="var(--primary-gold)" radius={[4, 4, 0, 0]} />
               </BarChart>

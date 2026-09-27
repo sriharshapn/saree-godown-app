@@ -48,7 +48,7 @@ function MarkSoldModal({ item, onClose, onConfirm }) {
         </p>
         {item.salePrice ? (
           <p style={{ color: 'var(--text-muted)', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
-            Sale price: <span style={{ color: '#FF6B6B', fontWeight: 'bold' }}>₹{item.salePrice.toLocaleString('en-IN')}</span> 
+            Sale price: <span style={{ color: 'var(--status-danger)', fontWeight: 'bold' }}>₹{item.salePrice.toLocaleString('en-IN')}</span> 
             <span style={{textDecoration: 'line-through', marginLeft: '8px', fontSize: '0.8rem'}}>₹{item.sellingPrice.toLocaleString('en-IN')}</span>
           </p>
         ) : (
@@ -61,7 +61,7 @@ function MarkSoldModal({ item, onClose, onConfirm }) {
         </p>
 
         {error && (
-          <div style={{ background: 'rgba(255, 107, 107, 0.1)', color: '#FF6B6B', padding: '0.8rem', borderRadius: '8px', marginBottom: '1rem', border: '1px solid rgba(255, 107, 107, 0.3)' }}>
+          <div style={{ background: 'rgba(255, 107, 107, 0.1)', color: 'var(--status-danger)', padding: '0.8rem', borderRadius: '8px', marginBottom: '1rem', border: '1px solid rgba(255, 107, 107, 0.3)' }}>
             {error}
           </div>
         )}
@@ -98,7 +98,7 @@ function MarkSoldModal({ item, onClose, onConfirm }) {
           {sellQuantity && pricePerPiece && Number(sellQuantity) > 0 && Number(pricePerPiece) > 0 && (
             <div style={{ background: 'rgba(46, 139, 87, 0.1)', border: '1px solid rgba(46, 139, 87, 0.3)', borderRadius: '8px', padding: '0.8rem', marginBottom: '1rem', textAlign: 'center' }}>
               <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Total sale: </span>
-              <strong style={{ color: '#4ade80', fontSize: '1.1rem' }}>₹{(Number(sellQuantity) * Number(pricePerPiece)).toLocaleString('en-IN')}</strong>
+              <strong style={{ color: 'var(--status-success)', fontSize: '1.1rem' }}>₹{(Number(sellQuantity) * Number(pricePerPiece)).toLocaleString('en-IN')}</strong>
             </div>
           )}
 

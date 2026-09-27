@@ -141,7 +141,7 @@ function AddItemModal({ onClose, onAdd, defaultCategory = 'saree' }) {
         </div>
 
         {error && (
-          <div style={{ background: 'rgba(255, 107, 107, 0.1)', color: '#FF6B6B', padding: '0.8rem', borderRadius: '8px', marginBottom: '1rem', border: '1px solid rgba(255, 107, 107, 0.3)' }}>
+          <div style={{ background: 'rgba(255, 107, 107, 0.1)', color: 'var(--status-danger)', padding: '0.8rem', borderRadius: '8px', marginBottom: '1rem', border: '1px solid rgba(255, 107, 107, 0.3)' }}>
             {error}
           </div>
         )}

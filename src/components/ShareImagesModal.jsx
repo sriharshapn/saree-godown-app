@@ -187,12 +187,12 @@ function ShareImagesModal({ items, onClose }) {
 
         {/* Errors / success */}
         {globalError && (
-          <p style={{ color: '#FF6B6B', fontSize: '0.9rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <p style={{ color: 'var(--status-danger)', fontSize: '0.9rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <AlertCircle size={16} /> {globalError}
           </p>
         )}
         {successMsg && (
-          <p style={{ color: '#4ade80', fontSize: '0.9rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <p style={{ color: 'var(--status-success)', fontSize: '0.9rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <CheckCircle2 size={16} /> {successMsg}
           </p>
         )}

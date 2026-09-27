@@ -40,7 +40,7 @@ function AdminLogin({ onLogin }) {
           />
           
           {error && (
-            <p style={{ color: '#FF6B6B', fontSize: '0.9rem', marginBottom: '1rem' }}>{error}</p>
+            <p style={{ color: 'var(--status-danger)', fontSize: '0.9rem', marginBottom: '1rem' }}>{error}</p>
           )}
           
           <button type="submit" className="btn-primary" style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: '1rem' }}>

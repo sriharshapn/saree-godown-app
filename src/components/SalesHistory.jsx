@@ -30,7 +30,7 @@ function UndoModal({ sale, onClose, onConfirm }) {
         <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>
           You are about to undo the sale of <strong>{sale.quantitySold} x {sale.modelName}</strong>.
         </p>
-        <p style={{ color: '#FF6B6B', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+        <p style={{ color: 'var(--status-danger)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
           This will restore the quantity to the inventory and deduct ₹{sale.totalPrice.toLocaleString('en-IN')} from your revenue.
         </p>
 
@@ -90,7 +90,7 @@ function SalesHistory({ sales, onUndoSale }) {
         <div className="glass-card" style={{ padding: '0', overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+              <tr style={{ borderBottom: '1px solid var(--glass-border)' }}>
                 <th style={{ padding: '1rem', color: 'var(--text-muted)', fontWeight: 500 }}>Date</th>
                 <th style={{ padding: '1rem', color: 'var(--text-muted)', fontWeight: 500 }}>Model</th>
                 <th style={{ padding: '1rem', color: 'var(--text-muted)', fontWeight: 500 }}>Qty</th>
@@ -101,17 +101,17 @@ function SalesHistory({ sales, onUndoSale }) {
             </thead>
             <tbody>
               {sortedSales.map((sale) => (
-                <tr key={sale.transactionId} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', opacity: sale.status === 'undone' ? 0.6 : 1 }}>
+                <tr key={sale.transactionId} style={{ borderBottom: '1px solid var(--glass-border)', opacity: sale.status === 'undone' ? 0.6 : 1 }}>
                   <td style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem' }}>
                     <Clock size={14} color="var(--text-muted)" /> {formatDate(sale.dateSold)}
                   </td>
                   <td style={{ padding: '1rem', fontWeight: 500 }}>{sale.modelName}</td>
                   <td style={{ padding: '1rem' }}>{sale.quantitySold}</td>
-                  <td style={{ padding: '1rem', color: '#4ade80', fontWeight: 600 }}>₹{sale.totalPrice.toLocaleString('en-IN')}</td>
+                  <td style={{ padding: '1rem', color: 'var(--status-success)', fontWeight: 600 }}>₹{sale.totalPrice.toLocaleString('en-IN')}</td>
                   <td style={{ padding: '1rem' }}>
                     {sale.status === 'undone' ? (
                       <div>
-                        <span className="badge" style={{ background: 'rgba(255,107,107,0.2)', color: '#FF6B6B' }}>Undone</span>
+                        <span className="badge" style={{ background: 'rgba(255,107,107,0.2)', color: 'var(--status-danger)' }}>Undone</span>
                         {sale.comment && <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>"{sale.comment}"</div>}
                       </div>
                     ) : (

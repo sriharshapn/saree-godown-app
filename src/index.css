@@ -1,21 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg-main: #0B0A0F;
-  --bg-secondary: #16151E;
-  --bg-glass: rgba(22, 21, 30, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  --bg-main: #050505;
+  --bg-secondary: #111111;
+  --bg-glass: rgba(17, 17, 17, 0.7);
+  --glass-border: rgba(212, 175, 55, 0.15); /* Gold tinted border for dark theme */
   
+  --overlay-light: rgba(255, 255, 255, 0.05);
+  --overlay-hover: rgba(255, 255, 255, 0.1);
+  --overlay-active: rgba(255, 255, 255, 0.2);
+
   --primary-gold: #D4AF37;
   --primary-gold-hover: #F3CA47;
   --primary-gold-dim: rgba(212, 175, 55, 0.15);
   
-  --accent-burgundy: #8B1C31;
-  --accent-green: #2E8B57;
-  --accent-blue: #4169E1;
+  --status-success: #4ade80;
+  --status-danger: #FF6B6B;
+  --status-info: #60a5fa;
 
-  --text-main: #F4F4F6;
-  --text-muted: #A0A0A8;
+  --text-main: #F5F5F5;
+  --text-muted: #999999;
   
   --radius-sm: 8px;
   --radius-md: 16px;
@@ -28,11 +32,19 @@
   --bg-main: #F9FAFB;
   --bg-secondary: #FFFFFF;
   --bg-glass: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(0, 0, 0, 0.1);
+  --glass-border: rgba(212, 175, 55, 0.3); /* Gold tinted border for light theme */
   
-  --primary-gold: #B8860B; /* darker gold for readability */
-  --primary-gold-hover: #DAA520;
-  --primary-gold-dim: rgba(184, 134, 11, 0.15);
+  --overlay-light: rgba(0, 0, 0, 0.03);
+  --overlay-hover: rgba(0, 0, 0, 0.08);
+  --overlay-active: rgba(0, 0, 0, 0.15);
+
+  --primary-gold: #C19B4B; /* darker gold for readability on white */
+  --primary-gold-hover: #D4AF37;
+  --primary-gold-dim: rgba(193, 155, 75, 0.15);
+
+  --status-success: #15803d;
+  --status-danger: #dc2626;
+  --status-info: #2563eb;
 
   --text-main: #111827;
   --text-muted: #4B5563;
@@ -192,7 +204,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--overlay-light);
   color: var(--text-main);
   border: 1px solid var(--glass-border);
   padding: 0.8rem 1.5rem;
@@ -204,13 +216,13 @@ input:focus, select:focus, textarea:focus {
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--overlay-hover);
+  border-color: var(--overlay-active);
 }
 
 .btn-danger {
   background: rgba(139, 28, 49, 0.2);
-  color: #FF6B6B;
+  color: var(--status-danger);
   border: 1px solid rgba(139, 28, 49, 0.5);
   padding: 0.4rem 0.8rem;
   border-radius: var(--radius-sm);
@@ -220,7 +232,7 @@ input:focus, select:focus, textarea:focus {
 
 .btn-danger:hover {
   background: rgba(139, 28, 49, 0.4);
-  border-color: #FF6B6B;
+  border-color: var(--status-danger);
 }
 
 /* Badges */
@@ -233,7 +245,7 @@ input:focus, select:focus, textarea:focus {
 
 .badge-success {
   background: rgba(46, 139, 87, 0.2);
-  color: #4ade80;
+  color: var(--status-success);
   border: 1px solid rgba(46, 139, 87, 0.4);
 }
 
@@ -245,7 +257,7 @@ input:focus, select:focus, textarea:focus {
 
 .badge-partial {
   background: rgba(65, 105, 225, 0.2);
-  color: #60a5fa;
+  color: var(--status-info);
   border: 1px solid rgba(65, 105, 225, 0.4);
 }
 
@@ -383,7 +395,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--overlay-active);
 }
 
 /* Media Queries for Mobile Responsiveness */
@@ -547,7 +559,7 @@ input:focus, select:focus, textarea:focus {
 /* Download button */
 .btn-download {
   background: rgba(65, 105, 225, 0.15);
-  color: #60a5fa;
+  color: var(--status-info);
   border: 1px solid rgba(65, 105, 225, 0.4);
   padding: 0.8rem 1.5rem;
   border-radius: var(--radius-sm);

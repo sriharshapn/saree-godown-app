@@ -90,11 +90,11 @@ function ItemCard({ item, onMarkSold, onDelete, onEdit, selectionMode = false, i
 
         {(isSold || isPartial) && item.soldPrice > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', background: 'rgba(46,139,87,0.08)', padding: '0.6rem', borderRadius: '8px' }}>
-            <p style={{ display: 'flex', alignItems: 'center', color: '#4ade80', fontSize: '1rem', fontWeight: 600 }}>
+            <p style={{ display: 'flex', alignItems: 'center', color: 'var(--status-success)', fontSize: '1rem', fontWeight: 600 }}>
               <IndianRupee size={14} /> {item.soldPrice.toLocaleString('en-IN')}
               <span style={{ fontWeight: 400, fontSize: '0.8rem', marginLeft: '0.5rem' }}>revenue ({item.soldQuantity} pcs)</span>
             </p>
-            <p style={{ fontSize: '0.8rem', fontWeight: 600, color: profit >= 0 ? '#4ade80' : '#FF6B6B' }}>
+            <p style={{ fontSize: '0.8rem', fontWeight: 600, color: profit >= 0 ? 'var(--status-success)' : 'var(--status-danger)' }}>
               {profit >= 0 ? '▲' : '▼'} ₹{Math.abs(profit).toLocaleString('en-IN')} {profit >= 0 ? 'profit' : 'loss'}
             </p>
           </div>

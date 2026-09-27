@@ -147,7 +147,7 @@ function EditItemModal({ item, onClose, onSave }) {
         </div>
 
         {error && (
-          <div style={{ background: 'rgba(255,107,107,0.1)', border: '1px solid rgba(255,107,107,0.3)', borderRadius: '8px', padding: '0.8rem', marginBottom: '1rem', color: '#FF6B6B', fontSize: '0.9rem' }}>
+          <div style={{ background: 'rgba(255,107,107,0.1)', border: '1px solid rgba(255,107,107,0.3)', borderRadius: '8px', padding: '0.8rem', marginBottom: '1rem', color: 'var(--status-danger)', fontSize: '0.9rem' }}>
             {error}
           </div>
         )}
@@ -210,7 +210,7 @@ function EditItemModal({ item, onClose, onSave }) {
               )}
             </div>
             {salePrice && Number(sellingPrice) > 0 && (
-              <p style={{ fontSize: '0.8rem', color: '#FF6B6B', marginTop: '0.4rem' }}>
+              <p style={{ fontSize: '0.8rem', color: 'var(--status-danger)', marginTop: '0.4rem' }}>
                 Customer will see ₹{Number(salePrice).toLocaleString('en-IN')} instead of <s>₹{Number(sellingPrice).toLocaleString('en-IN')}</s> - {Math.round(((Number(sellingPrice) - Number(salePrice)) / Number(sellingPrice)) * 100)}% off
               </p>
             )}
