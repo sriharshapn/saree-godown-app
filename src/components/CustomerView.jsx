@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import udupuLogo from '../assets/logo.png';
 import ProductCard from './ProductCard';
-import { MessageCircle, Search, Store, Phone, MapPin, Globe } from 'lucide-react';
+import { MessageCircle, Search, Store, Phone, MapPin, Globe, Sun, Moon } from 'lucide-react';
 import { getDriveImageUrl } from '../sheetsClient';
 
 const WHATSAPP_NUMBER = '916360718575';
@@ -12,7 +12,7 @@ const SHOP_ADDRESS_3 = 'Ballari — 583101, Karnataka';
 const SHOP_WEBSITE = 'https://harvishtrainingcenter.com';
 const SHOP_PHONE = '+91 63607 18575';
 
-function CustomerView({ inventory, onAdminClick }) {
+function CustomerView({ inventory, onAdminClick, theme, toggleTheme }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
 
@@ -41,7 +41,7 @@ function CustomerView({ inventory, onAdminClick }) {
       style={{
         background: categoryFilter === value ? 'var(--primary-gold-dim)' : 'transparent',
         color: categoryFilter === value ? 'var(--primary-gold)' : 'var(--text-muted)',
-        border: `1px solid ${categoryFilter === value ? 'rgba(212,175,55,0.3)' : 'rgba(255,255,255,0.08)'}`,
+        border: `1px solid ${categoryFilter === value ? 'rgba(212,175,55,0.3)' : 'var(--glass-border)'}`,
         padding: '0.4rem 1.1rem',
         borderRadius: '20px',
         cursor: 'pointer',
@@ -63,7 +63,7 @@ function CustomerView({ inventory, onAdminClick }) {
       <header style={{
         padding: '0 2rem',
         height: '72px',
-        background: 'rgba(22, 21, 30, 0.85)',
+        background: 'var(--bg-glass)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         borderBottom: '1px solid var(--glass-border)',
@@ -107,8 +107,8 @@ function CustomerView({ inventory, onAdminClick }) {
                 paddingTop: '0.5rem',
                 paddingBottom: '0.5rem',
                 borderRadius: '30px',
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.1)',
+                background: 'var(--bg-secondary)',
+                border: '1px solid var(--glass-border)',
                 fontSize: '0.88rem',
                 width: '200px',
                 color: 'var(--text-main)',
@@ -117,9 +117,14 @@ function CustomerView({ inventory, onAdminClick }) {
                 transition: 'all 0.3s ease',
               }}
               onFocus={e => { e.target.style.borderColor = 'var(--primary-gold)'; e.target.style.boxShadow = '0 0 0 2px var(--primary-gold-dim)'; e.target.style.width = '260px'; }}
-              onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.1)'; e.target.style.boxShadow = 'none'; e.target.style.width = '200px'; }}
+              onBlur={e => { e.target.style.borderColor = 'var(--glass-border)'; e.target.style.boxShadow = 'none'; e.target.style.width = '200px'; }}
             />
           </div>
+          
+          <button onClick={toggleTheme} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '0.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+
           <button
             onClick={onAdminClick}
             style={{
@@ -144,11 +149,17 @@ function CustomerView({ inventory, onAdminClick }) {
 
       {/* ── Mobile: category tabs + search + admin ── */}
       <div className="customer-mobile-controls" style={{ display: 'none', padding: '1rem 1rem 0' }}>
-        <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.75rem', scrollbarWidth: 'none' }}>
-          <CategoryBtn value="all" label="All" />
-          <CategoryBtn value="saree" label="Sarees" />
-          <CategoryBtn value="dress" label="Dresses" />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', scrollbarWidth: 'none' }}>
+            <CategoryBtn value="all" label="All" />
+            <CategoryBtn value="saree" label="Sarees" />
+            <CategoryBtn value="dress" label="Dresses" />
+          </div>
+          <button onClick={toggleTheme} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '0.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginLeft: '0.5rem' }}>
+            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
         </div>
+        
         <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem', alignItems: 'center' }}>
           <div style={{ position: 'relative', flex: 1 }}>
             <Search size={16} style={{ position: 'absolute', left: '0.9rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
@@ -157,7 +168,7 @@ function CustomerView({ inventory, onAdminClick }) {
               placeholder="Search collection..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ width: '100%', paddingLeft: '2.4rem', borderRadius: '30px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', fontFamily: 'Outfit, sans-serif' }}
+              style={{ width: '100%', paddingLeft: '2.4rem', borderRadius: '30px', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', fontFamily: 'Outfit, sans-serif' }}
             />
           </div>
           <button

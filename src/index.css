@@ -24,6 +24,22 @@
   --shadow-glow: 0 4px 30px rgba(212, 175, 55, 0.15);
 }
 
+[data-theme="light"] {
+  --bg-main: #F9FAFB;
+  --bg-secondary: #FFFFFF;
+  --bg-glass: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  
+  --primary-gold: #B8860B; /* darker gold for readability */
+  --primary-gold-hover: #DAA520;
+  --primary-gold-dim: rgba(184, 134, 11, 0.15);
+
+  --text-main: #111827;
+  --text-muted: #4B5563;
+  
+  --shadow-glow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -137,7 +153,7 @@ h2 {
 
 input, select, textarea {
   width: 100%;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--bg-main);
   border: 1px solid var(--glass-border);
   color: var(--text-main);
   padding: 0.8rem 1rem;

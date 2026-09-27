@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import udupuLogo from './assets/logo.png';
-import { LayoutDashboard, Store, RefreshCw, History, LogOut } from 'lucide-react';
+import { LayoutDashboard, Store, RefreshCw, History, LogOut, Sun, Moon } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import Inventory from './components/Inventory';
 import SalesHistory from './components/SalesHistory';
@@ -12,6 +12,20 @@ function App() {
   const [authMode, setAuthMode] = useState('customer'); // 'customer', 'login', 'admin'
   const [activeTab, setActiveTab] = useState('inventory');
   
+  // Theme state
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('udupu_theme') || 'dark';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('udupu_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  };
+
   // Instant load from localStorage cache (0ms load speed!)
   const [inventory, setInventory] = useState(() => {
     try {
@@ -250,7 +264,12 @@ function App() {
              <button className="btn-primary" onClick={() => loadInventory()}>Retry</button>
            </div>
         ) : (
-          <CustomerView inventory={inventory} onAdminClick={() => setAuthMode('login')} />
+          <CustomerView 
+            inventory={inventory} 
+            onAdminClick={() => setAuthMode('login')}
+            theme={theme}
+            toggleTheme={toggleTheme} 
+          />
         )}
       </>
     );
@@ -293,19 +312,30 @@ function App() {
           >
             <History size={20} /> Sales History
           </button>
-          <button 
-            className="nav-item"
-            onClick={loadInventory}
-            style={{ background: 'transparent', border: 'none', textAlign: 'left', width: '100%', marginTop: '1rem' }}
-          >
-            <RefreshCw size={20} /> Refresh
-          </button>
+
+          <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <button 
+              className="nav-item"
+              onClick={toggleTheme}
+              style={{ background: 'transparent', border: 'none', textAlign: 'left', width: '100%' }}
+            >
+              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />} 
+              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+            </button>
+            <button 
+              className="nav-item"
+              onClick={() => loadInventory(true)}
+              style={{ background: 'transparent', border: 'none', textAlign: 'left', width: '100%' }}
+            >
+              <RefreshCw size={20} /> Refresh
+            </button>
+          </div>
         </nav>
 
         <button 
           className="btn-secondary"
           onClick={() => setAuthMode('customer')}
-          style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: 'auto' }}
+          style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: '1rem' }}
         >
           <LogOut size={16} /> Logout
         </button>
